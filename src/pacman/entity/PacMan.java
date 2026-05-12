@@ -37,6 +37,15 @@ public class PacMan extends Entity {
         return this.moving;
     }
 
+    public boolean isPowerMode() {
+        return this.powerMode;
+    }
+
+    public void activatePowerMode() {
+        this.powerMode = true;
+        this.powerTimer = 200;
+    }
+
     public void setPendingDirection(Direction pendingDirection) {
         this.pendingDirection = pendingDirection;
     }
@@ -72,6 +81,13 @@ public class PacMan extends Entity {
     @Override
     public void update() {
         this.frameIndex = (this.frameIndex + 1) % FRAMES.length;
+
+        if (this.powerMode) {
+            this.powerTimer--;
+            if (this.powerTimer <= 0) {
+                this.powerMode = false;
+            }
+        }
 
         if (this.moving) {
             this.progress += 1f / FRAMES_PER_TILE;

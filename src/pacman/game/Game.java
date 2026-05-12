@@ -11,6 +11,7 @@ import pacman.entity.ghost.InkyGhost;
 import pacman.entity.ghost.PinkyGhost;
 import pacman.util.Direction;
 import pacman.util.GameState;
+import pacman.util.GhostState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +36,12 @@ public class Game {
         this.ghosts = new ArrayList<>();
 
         // TESTING ------------------
-        this.ghosts.add(new BlinkyGhost(3, 1, Direction.RIGHT));
-        this.ghosts.add(new PinkyGhost(5, 1, Direction.DOWN));
-        this.ghosts.add(new ClydeGhost(7, 1, Direction.UP));
-        this.ghosts.add(new InkyGhost(9, 1, Direction.LEFT));
+        this.ghosts.add(new BlinkyGhost(3, 1, 7, 14, Direction.RIGHT));
+        this.ghosts.add(new PinkyGhost(5, 1, 7, 14, Direction.DOWN));
+        this.ghosts.add(new ClydeGhost(7, 1, 7, 14, Direction.UP));
+        this.ghosts.add(new InkyGhost(9, 1, 7, 14, Direction.LEFT));
 
-        this.ghosts.add(new BlinkyGhost(11, 1, Direction.LEFT));
+        this.ghosts.add(new BlinkyGhost(11, 1, 7, 14, Direction.LEFT));
         this.ghosts.get(4).setFrightened();
 
         this.pacMan.setDirection(Direction.DOWN);
@@ -77,12 +78,22 @@ public class Game {
         System.out.println("escape event triggered");
     }
 
-    public void animationTick() {
+    public void tick() {
         if (this.gameState == GameState.RUNNING) {
             this.pacMan.update();
             if (!this.pacMan.isMoving()) {
                 this.pacMan.move(this.board);
             }
+
+            if (this.pacMan.getScoreManager().pollPowerPelletConsumed()) {
+                this.pacMan.activatePowerMode();
+                for (Ghost ghost : this.ghosts) {
+                    ghost.setFrightened();
+                }
+            }
+
+            this.checkCollisions();
+
             this.pacMan.render();
 
             for (Ghost ghost : this.ghosts) {
@@ -91,5 +102,37 @@ public class Game {
             }
         }
 
+    }
+
+    private void checkCollisions() {
+        for (Ghost ghost : this.ghosts) {
+            if (!this.isTileCollision(this.pacMan, ghost)) {
+                continue;
+            }
+
+            if (ghost.isFrightened()) {
+                ghost.onCaught();
+                this.pacMan.getScoreManager().addGhostEatenPoints();
+            } else if (ghost.getState() != GhostState.RESPAWNING) {
+                this.pacMan.getScoreManager().loseLife();
+                if (this.pacMan.getScoreManager().isGameOver()) {
+                    this.gameState = GameState.GAME_OVER;
+                    System.out.println("GAME OVER — score: " + this.pacMan.getScoreManager().getScore());
+                } else {
+                    this.resetRound();
+                }
+            }
+        }
+    }
+
+    private boolean isTileCollision(PacMan pac, Ghost ghost) {
+        pacman.util.Position pp = pac.boardPosition();
+        pacman.util.Position gp = ghost.boardPosition();
+        return pp.equals(gp);
+    }
+
+    private void resetRound() {
+        // TODO: restore spawn positions and animation state
+        System.out.println("Life lost — lives remaining: " + this.pacMan.getScoreManager().getLives());
     }
 }
