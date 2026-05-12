@@ -77,17 +77,13 @@ public class Game {
         System.out.println("escape event triggered");
     }
 
-    public void movementTick() {
-        if (this.gameState == GameState.RUNNING) {
-            this.pacMan.move(this.board);
-            System.out.println(this.pacMan.getScoreManager().getScore());
-        }
-    }
-
     public void animationTick() {
         if (this.gameState == GameState.RUNNING) {
-            this.pacMan.render();
             this.pacMan.update();
+            if (!this.pacMan.isMoving()) {
+                this.pacMan.move(this.board);
+            }
+            this.pacMan.render();
 
             for (Ghost ghost : this.ghosts) {
                 ghost.render();

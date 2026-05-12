@@ -14,6 +14,14 @@ public class PacMan extends Entity {
     private static final String[] FRAMES = {"resources/pacman/0.png", "resources/pacman/1.png", "resources/pacman/2.png"};
     private int frameIndex;
 
+    // movement animation
+    private float progress;
+    private Position fromPosition;
+    private Position toPosition;
+    private boolean moving;
+
+    private static final int FRAMES_PER_TILE = 4;
+
     public PacMan(int row, int col) {
         super(row, col, 5, Direction.RIGHT);
         this.powerMode = false;
@@ -23,6 +31,10 @@ public class PacMan extends Entity {
         this.getSprite().changePosition(this.windowPosition().getX(), this.windowPosition().getY());
         this.getSprite().makeVisible();
         this.scoreManager = new  ScoreManager();
+    }
+
+    public boolean isMoving() {
+        return this.moving;
     }
 
     public void setPendingDirection(Direction pendingDirection) {
@@ -60,19 +72,46 @@ public class PacMan extends Entity {
     @Override
     public void update() {
         this.frameIndex = (this.frameIndex + 1) % FRAMES.length;
-        this.setWindowPosition(new Position(this.boardPosition().getX() * SIZE, this.boardPosition().getY() * SIZE + 40));
+
+        if (this.moving) {
+            this.progress += 1f / FRAMES_PER_TILE;
+
+            if (this.progress >= 1f) {
+                this.progress = 1f;
+                this.moving = false;
+            }
+
+            this.setWindowPosition(
+                new Position(
+                    (int)(this.fromPosition.getX() + (this.toPosition.getX() - this.fromPosition.getX()) * this.progress),
+                    (int)(this.fromPosition.getY() + (this.toPosition.getY() - this.fromPosition.getY()) * this.progress)
+                )
+            );
+        }
     }
 
     @Override
     public void move(Board board) {
+        if (this.moving) {
+            return;
+        }
+
         if (this.pendingDirection != null && this.canMove(this.pendingDirection, board)) {
             this.setDirection(this.pendingDirection);
             this.pendingDirection = null;
         }
 
         if (this.canMove(this.getDirection(), board)) {
-            this.setBoardPosition(this.boardPosition().translate(this.getDirection()));
+            this.fromPosition = new Position(this.windowPosition().getX(), this.windowPosition().getY());
             board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager);
+
+            this.setBoardPosition(this.boardPosition().translate(this.getDirection()));
+
+            // calculate destination pixel coords without writing to windowPosition yet
+            this.toPosition = new Position(this.boardPosition().getX() * SIZE, this.boardPosition().getY() * SIZE + 40);
+
+            this.progress = 0f;
+            this.moving = true;
         }
     }
 }
