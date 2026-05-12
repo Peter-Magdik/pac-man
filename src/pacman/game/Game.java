@@ -28,9 +28,9 @@ public class Game {
         Manager manager = new Manager();
         manager.manageObject(this);
 
-        this.bg = new Image("resources/map.png");
-        this.bg.changePosition(0, 40);
-        this.bg.makeVisible();
+//        this.bg = new Image("resources/map.png");
+//        this.bg.changePosition(0, 40);
+//        this.bg.makeVisible();
 
         this.board =  new Board();
         this.pacMan = new PacMan(1, 1);
@@ -45,6 +45,8 @@ public class Game {
 
         this.ghosts.add(new BlinkyGhost(11, 1, Direction.LEFT));
         this.ghosts.get(4).setFrightened();
+
+        this.pacMan.setDirection(Direction.DOWN);
         // --------------------------
 
         this.gameState = GameState.RUNNING;
@@ -52,25 +54,25 @@ public class Game {
 
     public void up() {
         if (this.gameState == GameState.RUNNING) {
-            this.pacMan.setDirection(Direction.UP);
+            this.pacMan.setPendingDirection(Direction.UP);
         }
     }
 
     public void down() {
         if (this.gameState == GameState.RUNNING) {
-            this.pacMan.setDirection(Direction.DOWN);
+            this.pacMan.setPendingDirection(Direction.DOWN);
         }
     }
 
     public void left() {
         if (this.gameState == GameState.RUNNING) {
-            this.pacMan.setDirection(Direction.LEFT);
+            this.pacMan.setPendingDirection(Direction.LEFT);
         }
     }
 
     public void right() {
         if (this.gameState == GameState.RUNNING) {
-            this.pacMan.setDirection(Direction.RIGHT);
+            this.pacMan.setPendingDirection(Direction.RIGHT);
         }
     }
 
@@ -78,7 +80,13 @@ public class Game {
         System.out.println("escape event triggered");
     }
 
-    public void tick() {
+    public void movementTick() {
+        if (this.gameState == GameState.RUNNING) {
+            this.pacMan.move(this.board);
+        }
+    }
+
+    public void animationTick() {
         if (this.gameState == GameState.RUNNING) {
             this.pacMan.render();
             this.pacMan.update();

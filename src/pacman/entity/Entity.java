@@ -53,8 +53,16 @@ public abstract class Entity {
         return this.boardPosition;
     }
 
+    public void setBoardPosition(Position boardPosition) {
+        this.boardPosition = boardPosition;
+    }
+
     public Position windowPosition() {
         return this.windowPosition;
+    }
+
+    public void setWindowPosition(Position windowPosition) {
+        this.windowPosition = windowPosition;
     }
 
     public int getSpeed() {
@@ -72,6 +80,6 @@ public abstract class Entity {
     protected boolean canMove(Direction dir, Board board) {
         int nextCol = this.boardPosition.getX() + dir.dx();
         int nextRow = this.boardPosition.getY() + dir.dy();
-        return board.isWalkable(nextRow, nextCol);
+        return board.isWalkable(nextCol, nextRow);
     }
 }

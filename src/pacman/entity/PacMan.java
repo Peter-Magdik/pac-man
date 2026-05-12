@@ -3,6 +3,7 @@ package pacman.entity;
 import fri.shapesge.Image;
 import pacman.board.Board;
 import pacman.util.Direction;
+import pacman.util.Position;
 
 public class PacMan extends Entity {
     private Direction pendingDirection;
@@ -21,9 +22,14 @@ public class PacMan extends Entity {
         this.getSprite().makeVisible();
     }
 
+    public void setPendingDirection(Direction pendingDirection) {
+        this.pendingDirection = pendingDirection;
+    }
+
     @Override
     public void render() {
         this.getSprite().changeImage(FRAMES[this.frameIndex]);
+        this.getSprite().changePosition(this.windowPosition().getX(), this.windowPosition().getY());
         switch (this.getDirection()) {
             case RIGHT:
                 this.getSprite().changeAngle(0);
@@ -47,10 +53,18 @@ public class PacMan extends Entity {
     @Override
     public void update() {
         this.frameIndex = (this.frameIndex + 1) % FRAMES.length;
+        this.setWindowPosition(new Position(this.boardPosition().getX() * SIZE, this.boardPosition().getY() * SIZE + 40));
     }
 
     @Override
     public void move(Board board) {
+        if (this.pendingDirection != null && this.canMove(this.pendingDirection, board)) {
+            this.setDirection(this.pendingDirection);
+            this.pendingDirection = null;
+        }
 
+        if (this.canMove(this.getDirection(), board)) {
+            this.setBoardPosition(this.boardPosition().translate(this.getDirection()));
+        }
     }
 }
