@@ -4,8 +4,10 @@ import fri.shapesge.Image;
 import pacman.board.Board;
 import pacman.util.Direction;
 import pacman.util.Position;
+import pacman.util.ScoreManager;
 
 public class PacMan extends Entity {
+    private final ScoreManager scoreManager;
     private Direction pendingDirection;
     private boolean powerMode;
     private int powerTimer;
@@ -20,10 +22,15 @@ public class PacMan extends Entity {
         this.setSprite(new Image(FRAMES[this.frameIndex]));
         this.getSprite().changePosition(this.windowPosition().getX(), this.windowPosition().getY());
         this.getSprite().makeVisible();
+        this.scoreManager = new  ScoreManager();
     }
 
     public void setPendingDirection(Direction pendingDirection) {
         this.pendingDirection = pendingDirection;
+    }
+
+    public ScoreManager getScoreManager() {
+        return this.scoreManager;
     }
 
     @Override
@@ -65,6 +72,7 @@ public class PacMan extends Entity {
 
         if (this.canMove(this.getDirection(), board)) {
             this.setBoardPosition(this.boardPosition().translate(this.getDirection()));
+            board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager);
         }
     }
 }

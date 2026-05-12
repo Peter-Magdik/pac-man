@@ -11,14 +11,12 @@ import pacman.entity.ghost.InkyGhost;
 import pacman.entity.ghost.PinkyGhost;
 import pacman.util.Direction;
 import pacman.util.GameState;
-import pacman.util.ScoreManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
     private final Board board;
-    private final ScoreManager scoreManager;
     private final PacMan pacMan;
     private final List<Ghost> ghosts;
     private GameState gameState;
@@ -34,7 +32,6 @@ public class Game {
 
         this.board =  new Board();
         this.pacMan = new PacMan(1, 1);
-        this.scoreManager = new ScoreManager();
         this.ghosts = new ArrayList<>();
 
         // TESTING ------------------
@@ -83,6 +80,7 @@ public class Game {
     public void movementTick() {
         if (this.gameState == GameState.RUNNING) {
             this.pacMan.move(this.board);
+            System.out.println(this.pacMan.getScoreManager().getScore());
         }
     }
 
