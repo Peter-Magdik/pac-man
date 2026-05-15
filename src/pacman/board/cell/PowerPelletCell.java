@@ -1,7 +1,6 @@
 package pacman.board.cell;
 
 import fri.shapesge.Circle;
-import fri.shapesge.Square;
 import pacman.util.Position;
 import pacman.util.ScoreManager;
 

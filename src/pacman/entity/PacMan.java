@@ -127,6 +127,8 @@ public class PacMan extends Entity {
 
             this.progress = 0f;
             this.moving = true;
+        } else {
+            board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager);
         }
     }
 }

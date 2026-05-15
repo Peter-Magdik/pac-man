@@ -83,6 +83,7 @@ public class Game {
             this.pacMan.update();
             if (!this.pacMan.isMoving()) {
                 this.pacMan.move(this.board);
+                System.out.println(this.pacMan.boardPosition().toString());
             }
 
             if (this.pacMan.getScoreManager().pollPowerPelletConsumed()) {

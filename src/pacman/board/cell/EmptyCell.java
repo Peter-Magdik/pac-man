@@ -23,7 +23,7 @@ public class EmptyCell extends Cell {
     }
 
     @Override
-    public void onEnter(ScoreManager scoreManager) { } // nothing
+    public void onEnter(ScoreManager scoreManager) { }
 
     @Override
     public boolean isWalkable() {

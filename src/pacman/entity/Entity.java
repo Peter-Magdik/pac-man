@@ -87,15 +87,15 @@ public abstract class Entity {
             && ((col == 0 && dir == Direction.LEFT) || (col == BOARD_COLS - 1 && dir == Direction.RIGHT));
     }
 
-    protected Position nextPosition(Direction dir) {
-        if (isTunnelWrap(dir)) {
+    public Position nextPosition(Direction dir) {
+        if (this.isTunnelWrap(dir)) {
             return this.boardPosition.translateWrapped(dir, BOARD_COLS, BOARD_ROWS);
         }
         return this.boardPosition.translate(dir);
     }
 
-    protected boolean canMove(Direction dir, Board board) {
-        if (isTunnelWrap(dir)) {
+    public boolean canMove(Direction dir, Board board) {
+        if (this.isTunnelWrap(dir)) {
             return true;
         }
         int nextCol = this.boardPosition.getX() + dir.dx();
