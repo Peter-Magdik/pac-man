@@ -1,7 +1,9 @@
 package pacman.game;
 
+import fri.shapesge.FontStyle;
 import fri.shapesge.Image;
 import fri.shapesge.Manager;
+import fri.shapesge.TextBlock;
 import pacman.board.Board;
 import pacman.entity.PacMan;
 import pacman.entity.ghost.BlinkyGhost;
@@ -23,7 +25,11 @@ public class Game {
     private GameState gameState;
     private Image bg;
     private int resetTimer;
-    private static final int RESET_PAUSE_TICKS = 60;
+    private static final int RESET_PAUSE_TICKS = 30;
+
+    // stats
+    private TextBlock lives;
+    private TextBlock score;
 
     public Game() {
         Manager manager = new Manager();
@@ -47,6 +53,16 @@ public class Game {
         // --------------------------
 
         this.gameState = GameState.RUNNING;
+
+        this.lives = new TextBlock("", 10, 25);
+        this.lives.changeFont("Arial", FontStyle.BOLD, 20);
+        this.lives.changeColor("blue");
+        this.lives.makeVisible();
+        this.score = new TextBlock("", 100, 25);
+        this.score.changeFont("Arial", FontStyle.BOLD, 20);
+        this.score.changeColor("blue");
+        this.score.makeVisible();
+        this.updateStats();
     }
 
     public void up() {
@@ -95,6 +111,10 @@ public class Game {
             this.pacMan.update();
             if (!this.pacMan.isMoving()) {
                 this.pacMan.move(this.board);
+                this.updateStats();
+                if (this.board.isCleared()) {
+                    this.gameState = GameState.WON;
+                }
             }
 
             if (this.pacMan.getScoreManager().pollPowerPelletConsumed()) {
@@ -154,12 +174,17 @@ public class Game {
     }
 
     private void resetRound() {
-        System.out.println("Life lost — lives remaining: " + this.pacMan.getScoreManager().getLives());
+        this.updateStats();
         this.pacMan.resetToSpawn();
         for (Ghost ghost : this.ghosts) {
             ghost.resetToSpawn();
         }
         this.resetTimer = RESET_PAUSE_TICKS;
         this.gameState = GameState.RESETTING;
+    }
+
+    private void updateStats() {
+        this.lives.changeText(String.format("Lives: %d", this.pacMan.getScoreManager().getLives()));
+        this.score.changeText(String.format("Score: %d", this.pacMan.getScoreManager().getScore()));
     }
 }
