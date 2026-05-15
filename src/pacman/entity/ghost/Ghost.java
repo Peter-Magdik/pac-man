@@ -4,7 +4,12 @@ import pacman.board.Board;
 import pacman.entity.Entity;
 import pacman.util.Direction;
 import pacman.util.GhostState;
+import pacman.board.GraphBuilder;
 import pacman.util.Position;
+
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
 
 public abstract class Ghost extends Entity {
     public static final int CELL_SIZE = 20;
@@ -25,16 +30,34 @@ public abstract class Ghost extends Entity {
         this.frameIndex = 0;
     }
 
-    public abstract Direction calculateNextMove(Board board);
+    public abstract Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition);
 
     @Override
     public void move(Board board) {
-        if (this.state == GhostState.RESPAWNING) {
-            this.moveToHome();
+        // no-op: ghosts require game context, use move(Board, Position, Direction, Position) instead
+    }
+
+    public void move(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
+        if (this.isMoving()) {
             return;
         }
 
-        // TODO after implementation of graph
+        if (this.state == GhostState.RESPAWNING) {
+            if (this.boardPosition().equals(this.homePosition)) {
+                this.respawn();
+                return;
+            }
+            Direction dir = this.bfsNextDirection(board, this.boardPosition(), this.homePosition);
+            if (dir != Direction.NONE) {
+                this.startMove(dir);
+            }
+            return;
+        }
+
+        Direction dir = this.calculateNextMove(board, pacmanPosition, pacmanDirection, blinkyPosition);
+        if (dir != Direction.NONE) {
+            this.startMove(dir);
+        }
     }
 
     public void setFrightened() {
@@ -53,20 +76,12 @@ public abstract class Ghost extends Entity {
         this.state = GhostState.RESPAWNING;
         this.setDirection(Direction.RIGHT);
         this.frameIndex = 0;
-        this.moveToHome();
-    }
-
-    private void moveToHome() {
-        if (this.boardPosition().getX() == this.homePosition.getX() && this.boardPosition().getY() == this.homePosition.getY()) {
-            this.respawn();
-        } else {
-            System.out.println();
-            // TODO pathfinding using graph
-        }
     }
 
     @Override
     public void update() {
+        this.tickMovement();
+
         int maxFrames = (this.state == GhostState.FRIGHTENED) ? FRIGHTENED_FRAMES : NORMAL_FRAMES;
         this.frameIndex = (this.frameIndex + 1) % maxFrames;
 
@@ -91,6 +106,83 @@ public abstract class Ghost extends Entity {
     }
 
     public abstract String getSpriteDir();
+
+    // ------------------------------------------------------------------
+    // BFS utility — shared by all subclasses
+    // Returns the first Direction to take from 'from' to reach 'to'.
+    // Returns Direction.NONE if no path exists.
+    // ------------------------------------------------------------------
+    protected Direction bfsNextDirection(Board board, Position from, Position to) {
+        int cols = BOARD_COLS;
+        int rows = BOARD_ROWS;
+        int total = cols * rows;
+
+        int startIdx = GraphBuilder.toIndex(from.getY(), from.getX(), cols);
+        int goalIdx  = GraphBuilder.toIndex(to.getY(),   to.getX(),   cols);
+
+        if (startIdx == goalIdx) {
+            return Direction.NONE;
+        }
+
+        int[][] graph = board.getGraph();
+        int[] parent = new int[total];
+        Arrays.fill(parent, -1);
+        parent[startIdx] = startIdx;
+
+        Deque<Integer> queue = new ArrayDeque<>();
+        queue.add(startIdx);
+
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+            if (current == goalIdx) {
+                break;
+            }
+            for (int neighbor : graph[current]) {
+                if (parent[neighbor] == -1) {
+                    parent[neighbor] = current;
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        if (parent[goalIdx] == -1) {
+            return Direction.NONE;
+        }
+
+        // Walk back from goal to find the first step after start
+        int step = goalIdx;
+        while (parent[step] != startIdx) {
+            step = parent[step];
+        }
+
+        int dCol = GraphBuilder.toCol(step, cols) - from.getX();
+        int dRow = GraphBuilder.toRow(step, cols) - from.getY();
+
+        if (dCol > 1) {
+            dCol = -1;
+        }
+        if (dCol < -1) {
+            dCol = 1;
+        }
+
+        for (Direction dir : Direction.values()) {
+            if (dir.dx() == dCol && dir.dy() == dRow) {
+                return dir;
+            }
+        }
+
+        return Direction.NONE;
+    }
+
+    protected int manhattanDistance(Position a, Position b) {
+        return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
+    }
+
+    protected Position clampToBoard(int col, int row) {
+        col = Math.max(0, Math.min(BOARD_COLS - 1, col));
+        row = Math.max(0, Math.min(BOARD_ROWS - 1, row));
+        return new Position(col, row);
+    }
 
     public GhostState getState() {
         return this.state;
