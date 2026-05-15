@@ -18,6 +18,9 @@ public abstract class Entity {
     private Direction direction;
     private Image sprite;
 
+    private final Position spawnPosition;
+    private final Direction spawnDirection;
+
     // shared smooth-movement interpolation state
     private boolean moving;
     private float progress;
@@ -29,6 +32,8 @@ public abstract class Entity {
         this.windowPosition = new Position(position.getX() * SIZE, position.getY() * SIZE + 40);
         this.speed = speed;
         this.direction = direction;
+        this.spawnPosition = position;
+        this.spawnDirection = direction;
     }
 
     public Entity(int startCol, int startRow, int speed, Direction direction) {
@@ -89,6 +94,20 @@ public abstract class Entity {
 
     public boolean isMoving() {
         return this.moving;
+    }
+
+    public void resetToSpawn() {
+        this.boardPosition = this.spawnPosition;
+        this.windowPosition = new Position(this.spawnPosition.getX() * SIZE, this.spawnPosition.getY() * SIZE + 40);
+        this.direction = this.spawnDirection;
+        this.moving = false;
+        this.progress = 0f;
+        this.fromPosition = null;
+        this.toPosition = null;
+    }
+
+    public Position getSpawnPosition() {
+        return this.spawnPosition;
     }
 
     protected void startMove(Direction dir) {

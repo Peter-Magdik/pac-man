@@ -22,6 +22,8 @@ public class Game {
     private final List<Ghost> ghosts;
     private GameState gameState;
     private Image bg;
+    private int resetTimer;
+    private static final int RESET_PAUSE_TICKS = 60;
 
     public Game() {
         Manager manager = new Manager();
@@ -36,10 +38,10 @@ public class Game {
         this.ghosts = new ArrayList<>();
 
         // TESTING ------------------
-        this.ghosts.add(new BlinkyGhost(3, 1, 14, 14, Direction.RIGHT));
-        this.ghosts.add(new PinkyGhost(5, 1, 14, 14, Direction.DOWN));
-        this.ghosts.add(new ClydeGhost(7, 1, 14, 14, Direction.UP));
-        this.ghosts.add(new InkyGhost(9, 1, 14, 14, Direction.LEFT));
+        this.ghosts.add(new BlinkyGhost(11, 13, 14, 14, Direction.RIGHT));
+        this.ghosts.add(new PinkyGhost(11, 15, 14, 14, Direction.RIGHT));
+        this.ghosts.add(new ClydeGhost(16, 13, 14, 14, Direction.RIGHT));
+        this.ghosts.add(new InkyGhost(16, 15, 14, 14, Direction.LEFT));
 
         this.pacMan.setDirection(Direction.DOWN);
         // --------------------------
@@ -76,6 +78,19 @@ public class Game {
     }
 
     public void tick() {
+        if (this.gameState == GameState.RESETTING) {
+            this.resetTimer--;
+            if (this.resetTimer <= 0) {
+                this.gameState = GameState.RUNNING;
+                this.pacMan.activateInvincibility();
+            }
+            this.pacMan.render();
+            for (Ghost ghost : this.ghosts) {
+                ghost.render();
+            }
+            return;
+        }
+
         if (this.gameState == GameState.RUNNING) {
             this.pacMan.update();
             if (!this.pacMan.isMoving()) {
@@ -107,6 +122,10 @@ public class Game {
     }
 
     private void checkCollisions() {
+        if (this.pacMan.isInvincible()) {
+            return;
+        }
+
         for (Ghost ghost : this.ghosts) {
             if (!this.isTileCollision(this.pacMan, ghost)) {
                 continue;
@@ -123,6 +142,7 @@ public class Game {
                 } else {
                     this.resetRound();
                 }
+                return;
             }
         }
     }
@@ -134,7 +154,12 @@ public class Game {
     }
 
     private void resetRound() {
-        // TODO: restore spawn positions and animation state
         System.out.println("Life lost — lives remaining: " + this.pacMan.getScoreManager().getLives());
+        this.pacMan.resetToSpawn();
+        for (Ghost ghost : this.ghosts) {
+            ghost.resetToSpawn();
+        }
+        this.resetTimer = RESET_PAUSE_TICKS;
+        this.gameState = GameState.RESETTING;
     }
 }

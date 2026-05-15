@@ -10,6 +10,8 @@ public class PacMan extends Entity {
     private Direction pendingDirection;
     private boolean powerMode;
     private int powerTimer;
+    private int invincibleTimer;
+    private static final int INVINCIBLE_TICKS = 120;
     private static final String[] FRAMES = {"resources/pacman/0.png", "resources/pacman/1.png", "resources/pacman/2.png"};
     private int frameIndex;
 
@@ -27,6 +29,24 @@ public class PacMan extends Entity {
     public void activatePowerMode() {
         this.powerMode = true;
         this.powerTimer = 200;
+    }
+
+    public boolean isInvincible() {
+        return this.invincibleTimer > 0;
+    }
+
+    public void activateInvincibility() {
+        this.invincibleTimer = INVINCIBLE_TICKS;
+    }
+
+    @Override
+    public void resetToSpawn() {
+        super.resetToSpawn();
+        this.pendingDirection = null;
+        this.powerMode = false;
+        this.powerTimer = 0;
+        this.invincibleTimer = 0;
+        this.frameIndex = 0;
     }
 
     public void setPendingDirection(Direction pendingDirection) {
@@ -69,6 +89,10 @@ public class PacMan extends Entity {
             if (this.powerTimer <= 0) {
                 this.powerMode = false;
             }
+        }
+
+        if (this.invincibleTimer > 0) {
+            this.invincibleTimer--;
         }
 
         this.tickMovement();

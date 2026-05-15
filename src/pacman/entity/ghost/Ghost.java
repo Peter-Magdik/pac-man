@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Deque;
 
 public abstract class Ghost extends Entity {
-    public static final int CELL_SIZE = 20;
     private static final int SPEED = 2;
     private static final int FRIGHTENED_TICKS = 200;
     public static final int NORMAL_FRAMES = 2;
@@ -79,6 +78,14 @@ public abstract class Ghost extends Entity {
     }
 
     @Override
+    public void resetToSpawn() {
+        super.resetToSpawn();
+        this.state = GhostState.CHASE;
+        this.frightenedTimer = 0;
+        this.frameIndex = 0;
+    }
+
+    @Override
     public void update() {
         this.tickMovement();
 
@@ -107,15 +114,9 @@ public abstract class Ghost extends Entity {
 
     public abstract String getSpriteDir();
 
-    // ------------------------------------------------------------------
-    // BFS utility — shared by all subclasses
-    // Returns the first Direction to take from 'from' to reach 'to'.
-    // Returns Direction.NONE if no path exists.
-    // ------------------------------------------------------------------
-    protected Direction bfsNextDirection(Board board, Position from, Position to) {
+    public Direction bfsNextDirection(Board board, Position from, Position to) {
         int cols = BOARD_COLS;
-        int rows = BOARD_ROWS;
-        int total = cols * rows;
+        int total = cols * BOARD_ROWS;
 
         int startIdx = GraphBuilder.toIndex(from.getY(), from.getX(), cols);
         int goalIdx  = GraphBuilder.toIndex(to.getY(),   to.getX(),   cols);
