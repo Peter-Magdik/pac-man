@@ -3,9 +3,12 @@ package pacman.entity.ghost;
 import fri.shapesge.Image;
 import pacman.board.Board;
 import pacman.util.Direction;
+import pacman.util.Position;
 
 public class ClydeGhost extends Ghost {
     private static final String SPRITE_DIR = "resources/ghosts/clyde";
+    private static final Position SCATTER_CORNER = new Position(1, 29);
+    private static final int CHASE_THRESHOLD = 8;
 
     public ClydeGhost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
         super(startCol, startRow, respawnCol, respawnRow, direction);
@@ -15,8 +18,12 @@ public class ClydeGhost extends Ghost {
     }
 
     @Override
-    public Direction calculateNextMove(Board board) {
-        return null;
+    public Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
+        // Clyde: shy — chases with BFS when far (>8 tiles), retreats to scatter corner when close
+        Position target = this.manhattanDistance(this.boardPosition(), pacmanPosition) > CHASE_THRESHOLD
+            ? pacmanPosition
+            : SCATTER_CORNER;
+        return this.bfsNextDirection(board, this.boardPosition(), target);
     }
 
     @Override

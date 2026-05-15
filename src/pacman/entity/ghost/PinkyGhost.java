@@ -3,6 +3,7 @@ package pacman.entity.ghost;
 import fri.shapesge.Image;
 import pacman.board.Board;
 import pacman.util.Direction;
+import pacman.util.Position;
 
 public class PinkyGhost extends Ghost {
     private static final String SPRITE_DIR = "resources/ghosts/pinky";
@@ -15,8 +16,12 @@ public class PinkyGhost extends Ghost {
     }
 
     @Override
-    public Direction calculateNextMove(Board board) {
-        return null;
+    public Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
+        // Pinky: ambush — targets 4 tiles ahead of Pac-Man's current direction
+        int targetCol = pacmanPosition.getX() + pacmanDirection.dx() * 4;
+        int targetRow = pacmanPosition.getY() + pacmanDirection.dy() * 4;
+        Position target = this.clampToBoard(targetCol, targetRow);
+        return this.bfsNextDirection(board, this.boardPosition(), target);
     }
 
     @Override

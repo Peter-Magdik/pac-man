@@ -3,6 +3,7 @@ package pacman.entity.ghost;
 import fri.shapesge.Image;
 import pacman.board.Board;
 import pacman.util.Direction;
+import pacman.util.Position;
 
 public class BlinkyGhost extends Ghost {
     private static final String SPRITE_DIR = "resources/ghosts/blinky";
@@ -15,8 +16,9 @@ public class BlinkyGhost extends Ghost {
     }
 
     @Override
-    public Direction calculateNextMove(Board board) {
-        return null;
+    public Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
+        // Blinky: direct BFS chase — always targets Pac-Man's exact cell
+        return this.bfsNextDirection(board, this.boardPosition(), pacmanPosition);
     }
 
     @Override
