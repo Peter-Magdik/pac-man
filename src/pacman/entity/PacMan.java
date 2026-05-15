@@ -3,7 +3,6 @@ package pacman.entity;
 import fri.shapesge.Image;
 import pacman.board.Board;
 import pacman.util.Direction;
-import pacman.util.Position;
 import pacman.util.ScoreManager;
 
 public class PacMan extends Entity {
@@ -14,14 +13,6 @@ public class PacMan extends Entity {
     private static final String[] FRAMES = {"resources/pacman/0.png", "resources/pacman/1.png", "resources/pacman/2.png"};
     private int frameIndex;
 
-    // movement animation
-    private float progress;
-    private Position fromPosition;
-    private Position toPosition;
-    private boolean moving;
-
-    private static final int FRAMES_PER_TILE = 4;
-
     public PacMan(int row, int col) {
         super(row, col, 5, Direction.RIGHT);
         this.powerMode = false;
@@ -31,14 +22,6 @@ public class PacMan extends Entity {
         this.getSprite().changePosition(this.windowPosition().getX(), this.windowPosition().getY());
         this.getSprite().makeVisible();
         this.scoreManager = new  ScoreManager();
-    }
-
-    public boolean isMoving() {
-        return this.moving;
-    }
-
-    public boolean isPowerMode() {
-        return this.powerMode;
     }
 
     public void activatePowerMode() {
@@ -75,7 +58,6 @@ public class PacMan extends Entity {
                 System.out.println("PacMan has no direction!");
                 break;
         }
-
     }
 
     @Override
@@ -89,26 +71,12 @@ public class PacMan extends Entity {
             }
         }
 
-        if (this.moving) {
-            this.progress += 1f / FRAMES_PER_TILE;
-
-            if (this.progress >= 1f) {
-                this.progress = 1f;
-                this.moving = false;
-            }
-
-            this.setWindowPosition(
-                new Position(
-                    (int)(this.fromPosition.getX() + (this.toPosition.getX() - this.fromPosition.getX()) * this.progress),
-                    (int)(this.fromPosition.getY() + (this.toPosition.getY() - this.fromPosition.getY()) * this.progress)
-                )
-            );
-        }
+        this.tickMovement();
     }
 
     @Override
     public void move(Board board) {
-        if (this.moving) {
+        if (this.isMoving()) {
             return;
         }
 
@@ -118,15 +86,8 @@ public class PacMan extends Entity {
         }
 
         if (this.canMove(this.getDirection(), board)) {
-            this.fromPosition = new Position(this.windowPosition().getX(), this.windowPosition().getY());
             board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager);
-
-            this.setBoardPosition(this.nextPosition(this.getDirection()));
-
-            this.toPosition = new Position(this.boardPosition().getX() * SIZE, this.boardPosition().getY() * SIZE + 40);
-
-            this.progress = 0f;
-            this.moving = true;
+            this.startMove(this.getDirection());
         } else {
             board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager);
         }
