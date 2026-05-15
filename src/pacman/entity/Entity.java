@@ -10,12 +10,19 @@ public abstract class Entity {
     public static final int BOARD_COLS = 28;
     public static final int BOARD_ROWS = 31;
     public static final int TUNNEL_ROW = 14;
+    public static final int FRAMES_PER_TILE = 4;
+
     private Position boardPosition;
     private Position windowPosition;
     private int speed;
     private Direction direction;
-
     private Image sprite;
+
+    // shared smooth-movement interpolation state
+    private boolean moving;
+    private float progress;
+    private Position fromPosition;
+    private Position toPosition;
 
     public Entity(Position position, int speed, Direction direction) {
         this.boardPosition = position;
@@ -78,6 +85,37 @@ public abstract class Entity {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public boolean isMoving() {
+        return this.moving;
+    }
+
+    protected void startMove(Direction dir) {
+        this.fromPosition = new Position(this.windowPosition.getX(), this.windowPosition.getY());
+        this.setBoardPosition(this.nextPosition(dir));
+        this.toPosition = new Position(
+            this.boardPosition.getX() * SIZE,
+            this.boardPosition.getY() * SIZE + 40
+        );
+        this.setDirection(dir);
+        this.progress = 0f;
+        this.moving = true;
+    }
+
+    protected void tickMovement() {
+        if (!this.moving) {
+            return;
+        }
+        this.progress += 1f / FRAMES_PER_TILE;
+        if (this.progress >= 1f) {
+            this.progress = 1f;
+            this.moving = false;
+        }
+        this.setWindowPosition(new Position(
+            (int)(this.fromPosition.getX() + (this.toPosition.getX() - this.fromPosition.getX()) * this.progress),
+            (int)(this.fromPosition.getY() + (this.toPosition.getY() - this.fromPosition.getY()) * this.progress)
+        ));
     }
 
     protected boolean isTunnelWrap(Direction dir) {
