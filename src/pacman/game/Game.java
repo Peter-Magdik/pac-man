@@ -36,13 +36,10 @@ public class Game {
         this.ghosts = new ArrayList<>();
 
         // TESTING ------------------
-        this.ghosts.add(new BlinkyGhost(3, 1, 7, 14, Direction.RIGHT));
-        this.ghosts.add(new PinkyGhost(5, 1, 7, 14, Direction.DOWN));
-        this.ghosts.add(new ClydeGhost(7, 1, 7, 14, Direction.UP));
-        this.ghosts.add(new InkyGhost(9, 1, 7, 14, Direction.LEFT));
-
-        this.ghosts.add(new BlinkyGhost(11, 1, 7, 14, Direction.LEFT));
-        this.ghosts.get(4).setFrightened();
+        this.ghosts.add(new BlinkyGhost(3, 1, 14, 14, Direction.RIGHT));
+        this.ghosts.add(new PinkyGhost(5, 1, 14, 14, Direction.DOWN));
+        this.ghosts.add(new ClydeGhost(7, 1, 14, 14, Direction.UP));
+        this.ghosts.add(new InkyGhost(9, 1, 14, 14, Direction.LEFT));
 
         this.pacMan.setDirection(Direction.DOWN);
         // --------------------------
@@ -83,7 +80,6 @@ public class Game {
             this.pacMan.update();
             if (!this.pacMan.isMoving()) {
                 this.pacMan.move(this.board);
-                System.out.println(this.pacMan.boardPosition().toString());
             }
 
             if (this.pacMan.getScoreManager().pollPowerPelletConsumed()) {
@@ -98,11 +94,16 @@ public class Game {
             this.pacMan.render();
 
             for (Ghost ghost : this.ghosts) {
-                ghost.render();
                 ghost.update();
+                ghost.move(
+                    this.board,
+                    this.pacMan.boardPosition(),
+                    this.pacMan.getDirection(),
+                    this.ghosts.get(0).boardPosition()
+                );
+                ghost.render();
             }
         }
-
     }
 
     private void checkCollisions() {
