@@ -28,6 +28,8 @@ public class Game {
     private int resetTimer;
     private static final int RESET_PAUSE_TICKS = 30;
 
+    private final Overlay overlay;
+
     // stats
     private final TextBlock lives;
     private final TextBlock score;
@@ -59,6 +61,7 @@ public class Game {
         this.score.makeVisible();
         this.updateStats();
 
+        this.overlay = new Overlay();
         this.gameState = GameState.RUNNING;
 
         // this needs to be last or manager starts sending tick messages to uninitialized game
@@ -92,16 +95,31 @@ public class Game {
     }
 
     public void escape() {
-        System.out.println("escape event triggered");
+        System.exit(0);
+    }
+
+    public void reset() {
+        // todo: need to get original board info
+        this.resetRound();
+    }
+
+    public void pressedP() {
+        if (this.gameState == GameState.RUNNING) {
+            this.gameState = GameState.PAUSED;
+            this.overlay.showPaused();
+            return;
+        }
+
+        if (this.gameState == GameState.PAUSED) {
+            this.gameState = GameState.RUNNING;
+            this.overlay.hide();
+        }
     }
 
     public void tick() {
         switch (this.gameState) {
-            case WON -> {
-                System.out.println("YOU WON");
-            }
-            case PAUSED -> {
-
+            case WON, GAME_OVER -> {
+                this.overlay.showGameOver(this.pacMan.getScoreManager().getScore());
             }
             case RUNNING -> {
                 this.pacMan.update();
@@ -110,6 +128,7 @@ public class Game {
                     this.updateStats();
                     if (this.board.isCleared()) {
                         this.gameState = GameState.WON;
+                        this.overlay.showWin(this.pacMan.getScoreManager().getScore());
                     }
                 }
 
@@ -135,7 +154,7 @@ public class Game {
                     ghost.render();
                 }
             }
-            case GAME_OVER -> {
+            case PAUSED -> {
 
             }
             case RESETTING -> {
@@ -169,7 +188,7 @@ public class Game {
                 this.pacMan.getScoreManager().loseLife();
                 if (this.pacMan.getScoreManager().isGameOver()) {
                     this.gameState = GameState.GAME_OVER;
-                    System.out.println("GAME OVER — score: " + this.pacMan.getScoreManager().getScore());
+                    this.overlay.showGameOver(this.pacMan.getScoreManager().getScore());
                 } else {
                     this.resetRound();
                 }
@@ -193,6 +212,17 @@ public class Game {
         }
         this.resetTimer = RESET_PAUSE_TICKS;
         this.gameState = GameState.RESETTING;
+    }
+
+    private void restartGame() {
+        this.overlay.hide();
+        this.pacMan.resetToSpawn();
+        this.pacMan.getScoreManager().reset();
+        for (Ghost ghost : this.ghosts) {
+            ghost.resetToSpawn();
+        }
+        this.gameState = GameState.RUNNING;
+        this.updateStats();
     }
 
     private void updateStats() {
