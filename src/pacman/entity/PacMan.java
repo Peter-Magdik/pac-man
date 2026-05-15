@@ -109,10 +109,10 @@ public class PacMan extends Entity {
         }
 
         if (this.canMove(this.getDirection(), board)) {
-            board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager);
+            board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager, board);
             this.startMove(this.getDirection());
         } else {
-            board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager);
+            board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager, board);
         }
     }
 }

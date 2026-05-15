@@ -1,6 +1,7 @@
 package pacman.board.cell;
 
 import fri.shapesge.Circle;
+import pacman.board.Board;
 import pacman.util.Position;
 import pacman.util.ScoreManager;
 
@@ -35,15 +36,14 @@ public class PowerPelletCell extends Cell {
         this.sprite.makeInvisible();
     }
 
-    @Override
-    public void onEnter(ScoreManager scoreManager) {
+    public void onEnter(ScoreManager scoreManager, Board board) {
         if (this.isEaten) {
             return;
         }
-
         this.isEaten = true;
         this.hide();
         scoreManager.addPowerPelletPoints();
+        board.dotConsumed();
     }
 
     @Override

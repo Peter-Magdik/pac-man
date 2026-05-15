@@ -14,6 +14,7 @@ import pacman.entity.ghost.PinkyGhost;
 import pacman.util.Direction;
 import pacman.util.GameState;
 import pacman.util.GhostState;
+import pacman.util.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,41 +29,42 @@ public class Game {
     private static final int RESET_PAUSE_TICKS = 30;
 
     // stats
-    private TextBlock lives;
-    private TextBlock score;
+    private final TextBlock lives;
+    private final TextBlock score;
 
     public Game() {
-        Manager manager = new Manager();
-        manager.manageObject(this);
-
 //        this.bg = new Image("resources/map.png");
 //        this.bg.changePosition(0, 40);
 //        this.bg.makeVisible();
 
         this.board =  new Board();
-        this.pacMan = new PacMan(1, 1, Direction.DOWN);
-        this.ghosts = new ArrayList<>();
 
-        // TESTING ------------------
+        this.pacMan = new PacMan(1, 1, Direction.DOWN);
+        this.pacMan.setDirection(Direction.DOWN);
+
+        this.ghosts = new ArrayList<>();
         this.ghosts.add(new BlinkyGhost(11, 13, 14, 14, Direction.RIGHT));
         this.ghosts.add(new PinkyGhost(11, 15, 14, 14, Direction.RIGHT));
         this.ghosts.add(new ClydeGhost(16, 13, 14, 14, Direction.RIGHT));
         this.ghosts.add(new InkyGhost(16, 15, 14, 14, Direction.LEFT));
 
-        this.pacMan.setDirection(Direction.DOWN);
-        // --------------------------
-
-        this.gameState = GameState.RUNNING;
-
         this.lives = new TextBlock("", 10, 25);
         this.lives.changeFont("Arial", FontStyle.BOLD, 20);
         this.lives.changeColor("blue");
         this.lives.makeVisible();
+
         this.score = new TextBlock("", 100, 25);
         this.score.changeFont("Arial", FontStyle.BOLD, 20);
         this.score.changeColor("blue");
         this.score.makeVisible();
         this.updateStats();
+
+        this.gameState = GameState.RUNNING;
+
+        // this needs to be last or manager starts sending tick messages to uninitialized game
+        // and bad things will happen
+        Manager manager = new Manager();
+        manager.manageObject(this);
     }
 
     public void up() {
@@ -94,49 +96,58 @@ public class Game {
     }
 
     public void tick() {
-        if (this.gameState == GameState.RESETTING) {
-            this.resetTimer--;
-            if (this.resetTimer <= 0) {
-                this.gameState = GameState.RUNNING;
-                this.pacMan.activateInvincibility();
+        switch (this.gameState) {
+            case WON -> {
+                System.out.println("YOU WON");
             }
-            this.pacMan.render();
-            for (Ghost ghost : this.ghosts) {
-                ghost.render();
-            }
-            return;
-        }
+            case PAUSED -> {
 
-        if (this.gameState == GameState.RUNNING) {
-            this.pacMan.update();
-            if (!this.pacMan.isMoving()) {
-                this.pacMan.move(this.board);
-                this.updateStats();
-                if (this.board.isCleared()) {
-                    this.gameState = GameState.WON;
+            }
+            case RUNNING -> {
+                this.pacMan.update();
+                if (!this.pacMan.isMoving()) {
+                    this.pacMan.move(this.board);
+                    this.updateStats();
+                    if (this.board.isCleared()) {
+                        this.gameState = GameState.WON;
+                    }
                 }
-            }
 
-            if (this.pacMan.getScoreManager().pollPowerPelletConsumed()) {
-                this.pacMan.activatePowerMode();
+                if (this.pacMan.getScoreManager().pollPowerPelletConsumed()) {
+                    this.pacMan.activatePowerMode();
+                    for (Ghost ghost : this.ghosts) {
+                        ghost.setFrightened();
+                    }
+                }
+
+                this.checkCollisions();
+
+                this.pacMan.render();
+
                 for (Ghost ghost : this.ghosts) {
-                    ghost.setFrightened();
+                    ghost.update();
+                    ghost.move(
+                        this.board,
+                        this.pacMan.boardPosition(),
+                        this.pacMan.getDirection(),
+                        this.ghosts.get(0).boardPosition()
+                    );
+                    ghost.render();
                 }
             }
+            case GAME_OVER -> {
 
-            this.checkCollisions();
-
-            this.pacMan.render();
-
-            for (Ghost ghost : this.ghosts) {
-                ghost.update();
-                ghost.move(
-                    this.board,
-                    this.pacMan.boardPosition(),
-                    this.pacMan.getDirection(),
-                    this.ghosts.get(0).boardPosition()
-                );
-                ghost.render();
+            }
+            case RESETTING -> {
+                this.resetTimer--;
+                if (this.resetTimer <= 0) {
+                    this.gameState = GameState.RUNNING;
+                    this.pacMan.activateInvincibility();
+                }
+                this.pacMan.render();
+                for (Ghost ghost : this.ghosts) {
+                    ghost.render();
+                }
             }
         }
     }
@@ -167,9 +178,10 @@ public class Game {
         }
     }
 
+    // todo: inaccurate needs sprite collision
     private boolean isTileCollision(PacMan pac, Ghost ghost) {
-        pacman.util.Position pp = pac.boardPosition();
-        pacman.util.Position gp = ghost.boardPosition();
+        Position pp = pac.boardPosition();
+        Position gp = ghost.boardPosition();
         return pp.equals(gp);
     }
 

@@ -1,6 +1,7 @@
 package pacman.board.cell;
 
 import fri.shapesge.Square;
+import pacman.board.Board;
 import pacman.util.Position;
 import pacman.util.ScoreManager;
 
@@ -25,7 +26,7 @@ public class WallCell extends Cell {
     }
 
     @Override
-    public void onEnter(ScoreManager scoreManager) {
+    public void onEnter(ScoreManager scoreManager, Board board) {
         throw new IllegalStateException("can't enter wall");
     }
 

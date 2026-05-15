@@ -51,7 +51,7 @@ public class Board {
                 {this.wall(0, 30), this.wall(1, 30), this.wall(2, 30), this.wall(3, 30), this.wall(4, 30), this.wall(5, 30), this.wall(6, 30), this.wall(7, 30), this.wall(8, 30), this.wall(9, 30), this.wall(10, 30), this.wall(11, 30), this.wall(12, 30), this.wall(13, 30), this.wall(14, 30), this.wall(15, 30), this.wall(16, 30), this.wall(17, 30), this.wall(18, 30), this.wall(19, 30), this.wall(20, 30), this.wall(21, 30), this.wall(22, 30), this.wall(23, 30), this.wall(24, 30), this.wall(25, 30), this.wall(26, 30), this.wall(27, 30)}
         };
         this.graph = GraphBuilder.build(this, 31, 28);
-        this.remainingDots = 244;
+        this.remainingDots = 2;
     }
 
     private WallCell wall(final int x, final int y) {
@@ -78,11 +78,15 @@ public class Board {
         return this.grid[row][col].isWalkable();
     }
 
-    public int getRemainingDots() {
-        return this.remainingDots;
-    }
-
     public int[][] getGraph() {
         return this.graph;
+    }
+
+    public void dotConsumed() {
+        this.remainingDots--;
+    }
+
+    public boolean isCleared() {
+        return this.remainingDots == 0;
     }
 }

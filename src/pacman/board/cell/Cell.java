@@ -1,5 +1,6 @@
 package pacman.board.cell;
 
+import pacman.board.Board;
 import pacman.util.Position;
 import pacman.util.ScoreManager;
 
@@ -29,7 +30,7 @@ public abstract class Cell {
 
     public abstract void hide();
 
-    public abstract void onEnter(ScoreManager scoreManager);
+    public abstract void onEnter(ScoreManager scoreManager, Board board);
 
     public abstract boolean isWalkable();
 
