@@ -34,7 +34,7 @@ public class Game {
 //        this.bg.makeVisible();
 
         this.board =  new Board();
-        this.pacMan = new PacMan(1, 1);
+        this.pacMan = new PacMan(1, 1, Direction.DOWN);
         this.ghosts = new ArrayList<>();
 
         // TESTING ------------------

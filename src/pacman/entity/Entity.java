@@ -14,7 +14,6 @@ public abstract class Entity {
 
     private Position boardPosition;
     private Position windowPosition;
-    private int speed;
     private Direction direction;
     private Image sprite;
 
@@ -27,20 +26,18 @@ public abstract class Entity {
     private Position fromPosition;
     private Position toPosition;
 
-    public Entity(Position position, int speed, Direction direction) {
+    public Entity(Position position, Direction direction) {
         this.boardPosition = position;
         this.windowPosition = new Position(position.getX() * SIZE, position.getY() * SIZE + 40);
-        this.speed = speed;
         this.direction = direction;
         this.spawnPosition = position;
         this.spawnDirection = direction;
     }
 
-    public Entity(int startCol, int startRow, int speed, Direction direction) {
-        this(new Position(startCol, startRow), speed, direction);
+    public Entity(int startCol, int startRow, Direction direction) {
+        this(new Position(startCol, startRow), direction);
     }
 
-    public abstract void move(Board board);
     public abstract void update();
     public abstract void render();
 
@@ -80,10 +77,6 @@ public abstract class Entity {
         this.windowPosition = windowPosition;
     }
 
-    public int getSpeed() {
-        return this.speed;
-    }
-
     public Direction getDirection() {
         return this.direction;
     }
@@ -110,7 +103,7 @@ public abstract class Entity {
         return this.spawnPosition;
     }
 
-    protected void startMove(Direction dir) {
+    public void startMove(Direction dir) {
         this.fromPosition = new Position(this.windowPosition.getX(), this.windowPosition.getY());
         this.setBoardPosition(this.nextPosition(dir));
         this.toPosition = new Position(
@@ -122,7 +115,7 @@ public abstract class Entity {
         this.moving = true;
     }
 
-    protected void tickMovement() {
+    public void tickMovement() {
         if (!this.moving) {
             return;
         }
@@ -137,7 +130,7 @@ public abstract class Entity {
         ));
     }
 
-    protected boolean isTunnelWrap(Direction dir) {
+    public boolean isTunnelWrap(Direction dir) {
         int col = this.boardPosition.getX();
         int row = this.boardPosition.getY();
         return row == TUNNEL_ROW

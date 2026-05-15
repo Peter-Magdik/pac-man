@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Deque;
 
 public abstract class Ghost extends Entity {
-    private static final int SPEED = 2;
     private static final int FRIGHTENED_TICKS = 200;
     public static final int NORMAL_FRAMES = 2;
     public static final int FRIGHTENED_FRAMES = 4;
@@ -23,18 +22,13 @@ public abstract class Ghost extends Entity {
     private int frameIndex;
 
     public Ghost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
-        super(startCol, startRow, SPEED, direction);
+        super(startCol, startRow, direction);
         this.homePosition = new  Position(respawnCol, respawnRow);
         this.state = GhostState.CHASE;
         this.frameIndex = 0;
     }
 
     public abstract Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition);
-
-    @Override
-    public void move(Board board) {
-        // no-op: ghosts require game context, use move(Board, Position, Direction, Position) instead
-    }
 
     public void move(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
         if (this.isMoving()) {

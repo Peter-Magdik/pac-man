@@ -15,8 +15,8 @@ public class PacMan extends Entity {
     private static final String[] FRAMES = {"resources/pacman/0.png", "resources/pacman/1.png", "resources/pacman/2.png"};
     private int frameIndex;
 
-    public PacMan(int row, int col) {
-        super(row, col, 5, Direction.RIGHT);
+    public PacMan(int row, int col, Direction direction) {
+        super(row, col, direction);
         this.powerMode = false;
         this.powerTimer = 0;
         this.frameIndex = 0;
@@ -98,7 +98,6 @@ public class PacMan extends Entity {
         this.tickMovement();
     }
 
-    @Override
     public void move(Board board) {
         if (this.isMoving()) {
             return;
