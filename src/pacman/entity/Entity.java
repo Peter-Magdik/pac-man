@@ -7,6 +7,9 @@ import fri.shapesge.Image;
 
 public abstract class Entity {
     public static final int SIZE = 20;
+    public static final int BOARD_COLS = 28;
+    public static final int BOARD_ROWS = 31;
+    public static final int TUNNEL_ROW = 14;
     private Position boardPosition;
     private Position windowPosition;
     private int speed;
@@ -77,9 +80,29 @@ public abstract class Entity {
         this.direction = direction;
     }
 
+    protected boolean isTunnelWrap(Direction dir) {
+        int col = this.boardPosition.getX();
+        int row = this.boardPosition.getY();
+        return row == TUNNEL_ROW
+            && ((col == 0 && dir == Direction.LEFT) || (col == BOARD_COLS - 1 && dir == Direction.RIGHT));
+    }
+
+    protected Position nextPosition(Direction dir) {
+        if (isTunnelWrap(dir)) {
+            return this.boardPosition.translateWrapped(dir, BOARD_COLS, BOARD_ROWS);
+        }
+        return this.boardPosition.translate(dir);
+    }
+
     protected boolean canMove(Direction dir, Board board) {
+        if (isTunnelWrap(dir)) {
+            return true;
+        }
         int nextCol = this.boardPosition.getX() + dir.dx();
         int nextRow = this.boardPosition.getY() + dir.dy();
+        if (nextCol < 0 || nextCol >= BOARD_COLS || nextRow < 0 || nextRow >= BOARD_ROWS) {
+            return false;
+        }
         return board.isWalkable(nextCol, nextRow);
     }
 }

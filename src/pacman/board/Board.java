@@ -6,7 +6,6 @@ import pacman.board.cell.DotCell;
 import pacman.board.cell.PowerPelletCell;
 import pacman.board.cell.EmptyCell;
 
-import pacman.util.GraphBuilder;
 import pacman.util.Position;
 
 public class Board {
@@ -51,8 +50,7 @@ public class Board {
                 {this.wall(0, 29), this.empty(1, 29), this.empty(2, 29), this.empty(3, 29), this.empty(4, 29), this.empty(5, 29), this.empty(6, 29), this.empty(7, 29), this.empty(8, 29), this.empty(9, 29), this.empty(10, 29), this.empty(11, 29), this.empty(12, 29), this.empty(13, 29), this.empty(14, 29), this.empty(15, 29), this.empty(16, 29), this.empty(17, 29), this.empty(18, 29), this.empty(19, 29), this.empty(20, 29), this.empty(21, 29), this.empty(22, 29), this.empty(23, 29), this.empty(24, 29), this.empty(25, 29), this.empty(26, 29), this.wall(27, 29)},
                 {this.wall(0, 30), this.wall(1, 30), this.wall(2, 30), this.wall(3, 30), this.wall(4, 30), this.wall(5, 30), this.wall(6, 30), this.wall(7, 30), this.wall(8, 30), this.wall(9, 30), this.wall(10, 30), this.wall(11, 30), this.wall(12, 30), this.wall(13, 30), this.wall(14, 30), this.wall(15, 30), this.wall(16, 30), this.wall(17, 30), this.wall(18, 30), this.wall(19, 30), this.wall(20, 30), this.wall(21, 30), this.wall(22, 30), this.wall(23, 30), this.wall(24, 30), this.wall(25, 30), this.wall(26, 30), this.wall(27, 30)}
         };
-        // TODO index bug
-        //this.graph = GraphBuilder.build(this, 31, 28);
+        this.graph = GraphBuilder.build(this, 31, 28);
         this.remainingDots = 244;
     }
 

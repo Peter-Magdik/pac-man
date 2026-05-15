@@ -121,9 +121,8 @@ public class PacMan extends Entity {
             this.fromPosition = new Position(this.windowPosition().getX(), this.windowPosition().getY());
             board.getCell(this.boardPosition().getX(), this.boardPosition().getY()).onEnter(this.scoreManager);
 
-            this.setBoardPosition(this.boardPosition().translate(this.getDirection()));
+            this.setBoardPosition(this.nextPosition(this.getDirection()));
 
-            // calculate destination pixel coords without writing to windowPosition yet
             this.toPosition = new Position(this.boardPosition().getX() * SIZE, this.boardPosition().getY() * SIZE + 40);
 
             this.progress = 0f;

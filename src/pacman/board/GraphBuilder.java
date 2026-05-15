@@ -1,6 +1,4 @@
-package pacman.util;
-
-import pacman.board.Board;
+package pacman.board;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class GraphBuilder {
             for (int col = 0; col < cols; col++) {
                 int index = row * cols + col;
 
-                if (!board.isWalkable(row, col)) {
+                if (!board.isWalkable(col, row)) {
                     adjacency[index] = new int[0];
                     continue;
                 }
@@ -30,7 +28,7 @@ public class GraphBuilder {
                     int newCol = col + dir[1];
 
                     if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols
-                            && board.isWalkable(newRow, newCol)) {
+                            && board.isWalkable(newCol, newRow)) {
                         neighbors.add(newRow * cols + newCol);
                     }
                 }
@@ -39,7 +37,19 @@ public class GraphBuilder {
             }
         }
 
+        int leftTunnel  = GraphBuilder.toIndex(14, 0, cols);
+        int rightTunnel = GraphBuilder.toIndex(14, 27, cols);
+        adjacency[leftTunnel]  = appendNeighbor(adjacency[leftTunnel],  rightTunnel);
+        adjacency[rightTunnel] = appendNeighbor(adjacency[rightTunnel], leftTunnel);
+
         return adjacency;
+    }
+
+    private static int[] appendNeighbor(int[] existing, int neighbor) {
+        int[] updated = new int[existing.length + 1];
+        System.arraycopy(existing, 0, updated, 0, existing.length);
+        updated[existing.length] = neighbor;
+        return updated;
     }
 
     public static int toIndex(int row, int col, int cols) {

@@ -15,10 +15,9 @@ public class Position {
      * @param y row index (0 = topmost)
      */
     public Position(int x, int y) {
-        if  (x < 0 || y < 0) {
-            throw new IllegalArgumentException("x and y should not be negative");
+        if (x < 0 || y < 0) {
+            throw new IllegalArgumentException("Position coordinates must not be negative: x=" + x + ", y=" + y);
         }
-
         this.x = x;
         this.y = y;
     }
@@ -45,6 +44,12 @@ public class Position {
      */
     public Position translate(Direction direction) {
         return new Position(this.x + direction.dx(), this.y + direction.dy());
+    }
+
+    public Position translateWrapped(Direction direction, int cols, int rows) {
+        int newX = (this.x + direction.dx() + cols) % cols;
+        int newY = (this.y + direction.dy() + rows) % rows;
+        return new Position(newX, newY);
     }
 
     @Override
