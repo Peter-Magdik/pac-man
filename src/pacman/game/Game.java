@@ -11,10 +11,10 @@ import pacman.entity.ghost.ClydeGhost;
 import pacman.entity.ghost.Ghost;
 import pacman.entity.ghost.InkyGhost;
 import pacman.entity.ghost.PinkyGhost;
+import pacman.entity.Entity;
 import pacman.util.Direction;
 import pacman.util.GameState;
 import pacman.util.GhostState;
-import pacman.util.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -190,7 +190,7 @@ public class Game {
         }
 
         for (Ghost ghost : this.ghosts) {
-            if (!this.isTileCollision(this.pacMan, ghost)) {
+            if (!this.isCollision(this.pacMan, ghost)) {
                 continue;
             }
 
@@ -210,11 +210,15 @@ public class Game {
         }
     }
 
-    // todo: inaccurate needs sprite collision
-    private boolean isTileCollision(PacMan pac, Ghost ghost) {
-        Position pp = pac.boardPosition();
-        Position gp = ghost.boardPosition();
-        return pp.equals(gp);
+    private boolean isCollision(PacMan pac, Ghost ghost) {
+        final int tolerance = 6;
+        int px = pac.windowPosition().getX() + tolerance;
+        int py = pac.windowPosition().getY() + tolerance;
+        int ps = Entity.SIZE - tolerance * 2;
+        int gx = ghost.windowPosition().getX() + tolerance;
+        int gy = ghost.windowPosition().getY() + tolerance;
+        int gs = Entity.SIZE - tolerance * 2;
+        return px < gx + gs && px + ps > gx && py < gy + gs && py + ps > gy;
     }
 
     private void resetRound() {
