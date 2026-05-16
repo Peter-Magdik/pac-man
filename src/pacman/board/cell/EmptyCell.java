@@ -9,8 +9,8 @@ public class EmptyCell extends Cell {
         super(position);
     }
 
-    public EmptyCell(int row, int col) {
-        this(new  Position(col, row));
+    public EmptyCell(int col, int row) {
+        this(new Position(col, row));
     }
 
     @Override

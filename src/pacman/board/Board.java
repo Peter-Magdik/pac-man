@@ -6,8 +6,6 @@ import pacman.board.cell.DotCell;
 import pacman.board.cell.PowerPelletCell;
 import pacman.board.cell.EmptyCell;
 
-import pacman.util.Position;
-
 public class Board {
     private Cell[][] grid;
     private int remainingDots;
@@ -29,14 +27,14 @@ public class Board {
     private void initGrid() {
         this.grid = new Cell[][]{
                 {this.wall(0, 0), this.wall(1, 0), this.wall(2, 0), this.wall(3, 0), this.wall(4, 0), this.wall(5, 0), this.wall(6, 0), this.wall(7, 0), this.wall(8, 0), this.wall(9, 0), this.wall(10, 0), this.wall(11, 0), this.wall(12, 0), this.wall(13, 0), this.wall(14, 0), this.wall(15, 0), this.wall(16, 0), this.wall(17, 0), this.wall(18, 0), this.wall(19, 0), this.wall(20, 0), this.wall(21, 0), this.wall(22, 0), this.wall(23, 0), this.wall(24, 0), this.wall(25, 0), this.wall(26, 0), this.wall(27, 0)},
-                {this.wall(0, 1), this.dot(1, 1), this.dot(2, 1), this.dot(3, 1), this.dot(4, 1), this.dot(5, 1), this.dot(6, 1), this.dot(7, 1), this.dot(8, 1), this.dot(9, 1), this.dot(10, 1), this.dot(11, 1), this.dot(12, 1), this.wall(13, 1), this.wall(14, 1), this.dot(15, 1), this.dot(16, 1), this.dot(17, 1), this.dot(18, 1), this.dot(19, 1), this.dot(20, 1), this.dot(21, 1), this.dot(22, 1), this.dot(23, 1), this.dot(24, 1), this.dot(25, 1), this.dot(26, 1), this.wall(27, 1)},
+                {this.wall(0, 1), this.pellet(1, 1), this.dot(2, 1), this.dot(3, 1), this.dot(4, 1), this.dot(5, 1), this.dot(6, 1), this.dot(7, 1), this.dot(8, 1), this.dot(9, 1), this.dot(10, 1), this.dot(11, 1), this.dot(12, 1), this.wall(13, 1), this.wall(14, 1), this.dot(15, 1), this.dot(16, 1), this.dot(17, 1), this.dot(18, 1), this.dot(19, 1), this.dot(20, 1), this.dot(21, 1), this.dot(22, 1), this.dot(23, 1), this.dot(24, 1), this.dot(25, 1), this.pellet(26, 1), this.wall(27, 1)},
                 {this.wall(0, 2), this.dot(1, 2), this.wall(2, 2), this.wall(3, 2), this.wall(4, 2), this.wall(5, 2), this.dot(6, 2), this.wall(7, 2), this.wall(8, 2), this.wall(9, 2), this.wall(10, 2), this.wall(11, 2), this.dot(12, 2), this.wall(13, 2), this.wall(14, 2), this.dot(15, 2), this.wall(16, 2), this.wall(17, 2), this.wall(18, 2), this.wall(19, 2), this.wall(20, 2), this.dot(21, 2), this.wall(22, 2), this.wall(23, 2), this.wall(24, 2), this.wall(25, 2), this.dot(26, 2), this.wall(27, 2)},
                 {this.wall(0, 3), this.dot(1, 3), this.wall(2, 3), this.empty(3, 3), this.empty(4, 3), this.wall(5, 3), this.dot(6, 3), this.wall(7, 3), this.empty(8, 3), this.empty(9, 3), this.empty(10, 3), this.wall(11, 3), this.dot(12, 3), this.wall(13, 3), this.wall(14, 3), this.dot(15, 3), this.wall(16, 3), this.empty(17, 3), this.empty(18, 3), this.empty(19, 3), this.wall(20, 3), this.dot(21, 3), this.wall(22, 3), this.empty(23, 3), this.empty(24, 3), this.wall(25, 3), this.dot(26, 3), this.wall(27, 3)},
                 {this.wall(0, 4), this.dot(1, 4), this.wall(2, 4), this.wall(3, 4), this.wall(4, 4), this.wall(5, 4), this.dot(6, 4), this.wall(7, 4), this.wall(8, 4), this.wall(9, 4), this.wall(10, 4), this.wall(11, 4), this.dot(12, 4), this.wall(13, 4), this.wall(14, 4), this.dot(15, 4), this.wall(16, 4), this.wall(17, 4), this.wall(18, 4), this.wall(19, 4), this.wall(20, 4), this.dot(21, 4), this.wall(22, 4), this.wall(23, 4), this.wall(24, 4), this.wall(25, 4), this.dot(26, 4), this.wall(27, 4)},
                 {this.wall(0, 5), this.dot(1, 5), this.dot(2, 5), this.dot(3, 5), this.dot(4, 5), this.dot(5, 5), this.dot(6, 5), this.dot(7, 5), this.dot(8, 5), this.dot(9, 5), this.dot(10, 5), this.dot(11, 5), this.dot(12, 5), this.dot(13, 5), this.dot(14, 5), this.dot(15, 5), this.dot(16, 5), this.dot(17, 5), this.dot(18, 5), this.dot(19, 5), this.dot(20, 5), this.dot(21, 5), this.dot(22, 5), this.dot(23, 5), this.dot(24, 5), this.dot(25, 5), this.dot(26, 5), this.wall(27, 5)},
                 {this.wall(0, 6), this.dot(1, 6), this.wall(2, 6), this.wall(3, 6), this.wall(4, 6), this.wall(5, 6), this.dot(6, 6), this.wall(7, 6), this.wall(8, 6), this.dot(9, 6), this.wall(10, 6), this.wall(11, 6), this.wall(12, 6), this.wall(13, 6), this.wall(14, 6), this.wall(15, 6), this.wall(16, 6), this.wall(17, 6), this.dot(18, 6), this.wall(19, 6), this.wall(20, 6), this.dot(21, 6), this.wall(22, 6), this.wall(23, 6), this.wall(24, 6), this.wall(25, 6), this.dot(26, 6), this.wall(27, 6)},
                 {this.wall(0, 7), this.dot(1, 7), this.wall(2, 7), this.wall(3, 7), this.wall(4, 7), this.wall(5, 7), this.dot(6, 7), this.wall(7, 7), this.wall(8, 7), this.dot(9, 7), this.wall(10, 7), this.wall(11, 7), this.wall(12, 7), this.wall(13, 7), this.wall(14, 7), this.wall(15, 7), this.wall(16, 7), this.wall(17, 7), this.dot(18, 7), this.wall(19, 7), this.wall(20, 7), this.dot(21, 7), this.wall(22, 7), this.wall(23, 7), this.wall(24, 7), this.wall(25, 7), this.dot(26, 7), this.wall(27, 7)},
-                {this.wall(0, 8), this.pellet(1, 8), this.dot(2, 8), this.dot(3, 8), this.dot(4, 8), this.dot(5, 8), this.dot(6, 8), this.wall(7, 8), this.wall(8, 8), this.dot(9, 8), this.dot(10, 8), this.dot(11, 8), this.dot(12, 8), this.wall(13, 8), this.wall(14, 8), this.dot(15, 8), this.dot(16, 8), this.dot(17, 8), this.dot(18, 8), this.wall(19, 8), this.wall(20, 8), this.dot(21, 8), this.dot(22, 8), this.dot(23, 8), this.dot(24, 8), this.dot(25, 8), this.dot(26, 8), this.wall(27, 8)},
+                {this.wall(0, 8), this.dot(1, 8), this.dot(2, 8), this.dot(3, 8), this.dot(4, 8), this.dot(5, 8), this.dot(6, 8), this.wall(7, 8), this.wall(8, 8), this.dot(9, 8), this.dot(10, 8), this.dot(11, 8), this.dot(12, 8), this.wall(13, 8), this.wall(14, 8), this.dot(15, 8), this.dot(16, 8), this.dot(17, 8), this.dot(18, 8), this.wall(19, 8), this.wall(20, 8), this.dot(21, 8), this.dot(22, 8), this.dot(23, 8), this.dot(24, 8), this.dot(25, 8), this.dot(26, 8), this.wall(27, 8)},
                 {this.wall(0, 9), this.wall(1, 9), this.wall(2, 9), this.wall(3, 9), this.wall(4, 9), this.wall(5, 9), this.dot(6, 9), this.wall(7, 9), this.wall(8, 9), this.wall(9, 9), this.wall(10, 9), this.wall(11, 9), this.dot(12, 9), this.wall(13, 9), this.wall(14, 9), this.dot(15, 9), this.wall(16, 9), this.wall(17, 9), this.wall(18, 9), this.wall(19, 9), this.wall(20, 9), this.dot(21, 9), this.wall(22, 9), this.wall(23, 9), this.wall(24, 9), this.wall(25, 9), this.wall(26, 9), this.wall(27, 9)},
                 {this.empty (0, 10), this.empty(1, 10), this.empty(2, 10), this.empty(3, 10), this.empty(4, 10), this.wall(5, 10), this.dot(6, 10), this.wall(7, 10), this.wall(8, 10), this.wall(9, 10), this.wall(10, 10), this.wall(11, 10), this.dot(12, 10), this.wall(13, 10), this.wall(14, 10), this.dot(15, 10), this.wall(16, 10), this.wall(17, 10), this.wall(18, 10), this.wall(19, 10), this.wall(20, 10), this.dot(21, 10), this.wall(22, 10), this.empty(23, 10), this.empty(24, 10), this.empty(25, 10), this.empty(26, 10), this.empty(27, 10)},
                 {this.empty (0, 11), this.empty(1, 11), this.empty(2, 11), this.empty(3, 11), this.empty(4, 11), this.wall(5, 11), this.dot(6, 11), this.wall(7, 11), this.wall(8, 11), this.dot(9, 11), this.dot(10, 11), this.dot(11, 11), this.dot(12, 11), this.dot(13, 11), this.dot(14, 11), this.dot(15, 11), this.dot(16, 11), this.dot(17, 11), this.dot(18, 11), this.wall(19, 11), this.wall(20, 11), this.dot(21, 11), this.wall(22, 11), this.empty(23, 11), this.empty(24, 11), this.empty(25, 11), this.empty(26, 11), this.empty(27, 11)},
@@ -57,7 +55,7 @@ public class Board {
                 {this.wall(0, 26), this.dot(1, 26), this.dot(2, 26), this.dot(3, 26), this.dot(4, 26), this.dot(5, 26), this.dot(6, 26), this.wall(7, 26), this.wall(8, 26), this.dot(9, 26), this.dot(10, 26), this.dot(11, 26), this.dot(12, 26), this.wall(13, 26), this.wall(14, 26), this.dot(15, 26), this.dot(16, 26), this.dot(17, 26), this.dot(18, 26), this.wall(19, 26), this.wall(20, 26), this.dot(21, 26), this.dot(22, 26), this.dot(23, 26), this.dot(24, 26), this.dot(25, 26), this.dot(26, 26), this.wall(27, 26)},
                 {this.wall(0, 27), this.dot(1, 27), this.wall(2, 27), this.wall(3, 27), this.wall(4, 27), this.wall(5, 27), this.wall(6, 27), this.wall(7, 27), this.wall(8, 27), this.wall(9, 27), this.wall(10, 27), this.wall(11, 27), this.dot(12, 27), this.wall(13, 27), this.wall(14, 27), this.dot(15, 27), this.wall(16, 27), this.wall(17, 27), this.wall(18, 27), this.wall(19, 27), this.wall(20, 27), this.wall(21, 27), this.wall(22, 27), this.wall(23, 27), this.wall(24, 27), this.wall(25, 27), this.dot(26, 27), this.wall(27, 27)},
                 {this.wall(0, 28), this.dot(1, 28), this.wall(2, 28), this.wall(3, 28), this.wall(4, 28), this.wall(5, 28), this.wall(6, 28), this.wall(7, 28), this.wall(8, 28), this.wall(9, 28), this.wall(10, 28), this.wall(11, 28), this.dot(12, 28), this.wall(13, 28), this.wall(14, 28), this.dot(15, 28), this.wall(16, 28), this.wall(17, 28), this.wall(18, 28), this.wall(19, 28), this.wall(20, 28), this.wall(21, 28), this.wall(22, 28), this.wall(23, 28), this.wall(24, 28), this.wall(25, 28), this.dot(26, 28), this.wall(27, 28)},
-                {this.wall(0, 29), this.dot(1, 29), this.dot(2, 29), this.dot(3, 29), this.dot(4, 29), this.dot(5, 29), this.dot(6, 29), this.dot(7, 29), this.dot(8, 29), this.dot(9, 29), this.dot(10, 29), this.dot(11, 29), this.dot(12, 29), this.dot(13, 29), this.dot(14, 29), this.dot(15, 29), this.dot(16, 29), this.dot(17, 29), this.dot(18, 29), this.dot(19, 29), this.dot(20, 29), this.dot(21, 29), this.dot(22, 29), this.dot(23, 29), this.dot(24, 29), this.dot(25, 29), this.dot(26, 29), this.wall(27, 29)},
+                {this.wall(0, 29), this.pellet(1, 29), this.dot(2, 29), this.dot(3, 29), this.dot(4, 29), this.dot(5, 29), this.dot(6, 29), this.dot(7, 29), this.dot(8, 29), this.dot(9, 29), this.dot(10, 29), this.dot(11, 29), this.dot(12, 29), this.dot(13, 29), this.dot(14, 29), this.dot(15, 29), this.dot(16, 29), this.dot(17, 29), this.dot(18, 29), this.dot(19, 29), this.dot(20, 29), this.dot(21, 29), this.dot(22, 29), this.dot(23, 29), this.dot(24, 29), this.dot(25, 29), this.pellet(26, 29), this.wall(27, 29)},
                 {this.wall(0, 30), this.wall(1, 30), this.wall(2, 30), this.wall(3, 30), this.wall(4, 30), this.wall(5, 30), this.wall(6, 30), this.wall(7, 30), this.wall(8, 30), this.wall(9, 30), this.wall(10, 30), this.wall(11, 30), this.wall(12, 30), this.wall(13, 30), this.wall(14, 30), this.wall(15, 30), this.wall(16, 30), this.wall(17, 30), this.wall(18, 30), this.wall(19, 30), this.wall(20, 30), this.wall(21, 30), this.wall(22, 30), this.wall(23, 30), this.wall(24, 30), this.wall(25, 30), this.wall(26, 30), this.wall(27, 30)}
         };
         this.graph = GraphBuilder.build(this, 31, 28);
@@ -65,19 +63,19 @@ public class Board {
     }
 
     private WallCell wall(final int x, final int y) {
-        return new WallCell(new Position(x, y));
+        return new WallCell(x, y);
     }
 
     private DotCell dot(final int x, final int y) {
-        return new DotCell(new Position(x, y));
+        return new DotCell(x, y);
     }
 
     private PowerPelletCell pellet(final int x, final int y) {
-        return new PowerPelletCell(new Position(x, y));
+        return new PowerPelletCell(x, y);
     }
 
     private EmptyCell empty(final int x, final int y) {
-        return new EmptyCell(new Position(x, y));
+        return new EmptyCell(x, y);
     }
 
     public Cell getCell(int col, int row) {

@@ -6,20 +6,10 @@ import pacman.util.ScoreManager;
 
 public abstract class Cell {
     public static final int CELL_SIZE = 20;
-    private final Position boardPosition;
     private final Position windowPosition;
 
     public Cell(Position position) {
-        this.boardPosition = position;
         this.windowPosition = new  Position(position.getX() * CELL_SIZE, position.getY() *  CELL_SIZE + 40);
-    }
-
-    public Cell(int row, int column) {
-        this(new Position(column, row));
-    }
-
-    public Position boardPosition() {
-        return this.boardPosition;
     }
 
     public Position windowPosition() {

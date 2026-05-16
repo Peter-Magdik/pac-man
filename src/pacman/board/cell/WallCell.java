@@ -6,7 +6,7 @@ import pacman.util.Position;
 import pacman.util.ScoreManager;
 
 public class WallCell extends Cell {
-    private Square square;
+    private final Square square;
 
     public WallCell(Position position) {
         super(position);
@@ -14,6 +14,10 @@ public class WallCell extends Cell {
         this.square.changeSize(CELL_SIZE);
 
         this.draw();
+    }
+
+    public WallCell(int col, int row) {
+        this(new Position(col, row));
     }
 
     @Override

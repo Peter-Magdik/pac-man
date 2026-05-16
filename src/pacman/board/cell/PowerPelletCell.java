@@ -21,7 +21,7 @@ public class PowerPelletCell extends Cell {
     }
 
     public PowerPelletCell(int col, int row) {
-        this(new  Position(col, row));
+        this(new Position(col, row));
     }
 
     @Override
