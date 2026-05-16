@@ -19,6 +19,16 @@ public enum  Direction {
         this.dy = dy;
     }
 
+    public Direction opposite() {
+        return switch (this) {
+            case UP -> DOWN;
+            case DOWN -> UP;
+            case LEFT -> RIGHT;
+            case RIGHT -> LEFT;
+            case NONE -> NONE;
+        };
+    }
+
     /**
      * Horizontal movement delta.
      *

@@ -7,6 +7,7 @@ import pacman.util.Position;
 
 public class BlinkyGhost extends Ghost {
     private static final String SPRITE_DIR = "resources/ghosts/blinky";
+    private static final Position SCATTER_CORNER = new Position(25, 1);
 
     public BlinkyGhost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
         super(startCol, startRow, respawnCol, respawnRow, direction);
@@ -17,7 +18,10 @@ public class BlinkyGhost extends Ghost {
 
     @Override
     public Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
-        // Blinky: direct BFS chase — always targets Pac-Man's exact cell
+        if (this.getState() == pacman.util.GhostState.SCATTER) {
+            return this.bfsNextDirection(board, this.boardPosition(), SCATTER_CORNER);
+        }
+        // CHASE: direct BFS — always targets Pac-Man's exact cell
         return this.bfsNextDirection(board, this.boardPosition(), pacmanPosition);
     }
 

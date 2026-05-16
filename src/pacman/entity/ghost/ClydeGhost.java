@@ -8,7 +8,7 @@ import pacman.util.Position;
 public class ClydeGhost extends Ghost {
     private static final String SPRITE_DIR = "resources/ghosts/clyde";
     private static final Position SCATTER_CORNER = new Position(1, 29);
-    private static final int CHASE_THRESHOLD = 8;
+    private static final int CHASE_THRESHOLD = 4;
 
     public ClydeGhost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
         super(startCol, startRow, respawnCol, respawnRow, direction);
@@ -19,7 +19,10 @@ public class ClydeGhost extends Ghost {
 
     @Override
     public Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
-        // Clyde: shy — chases with BFS when far (>8 tiles), retreats to scatter corner when close
+        if (this.getState() == pacman.util.GhostState.SCATTER) {
+            return this.bfsNextDirection(board, this.boardPosition(), SCATTER_CORNER);
+        }
+        // CHASE: shy —> chases with BFS when far (>4 tiles), retreats to scatter corner when close
         Position target = this.manhattanDistance(this.boardPosition(), pacmanPosition) > CHASE_THRESHOLD
             ? pacmanPosition
             : SCATTER_CORNER;

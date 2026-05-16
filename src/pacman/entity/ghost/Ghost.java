@@ -8,23 +8,34 @@ import pacman.board.GraphBuilder;
 import pacman.util.Position;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.List;
+import java.util.Random;
 
 public abstract class Ghost extends Entity {
     private static final int FRIGHTENED_TICKS = 200;
+    private static final int SCATTER_TICKS = 420;   // ~7 s at 60 tps
+    private static final int CHASE_TICKS = 1200;  // ~20 s at 60 tps
     public static final int NORMAL_FRAMES = 2;
     public static final int FRIGHTENED_FRAMES = 4;
+
+    private static final Random RANDOM = new Random();
 
     private GhostState state;
     private final Position homePosition;
     private int frightenedTimer;
+    private int modeTimer;
+    private boolean inScatterPhase;
     private int frameIndex;
 
     public Ghost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
         super(startCol, startRow, direction);
         this.homePosition = new  Position(respawnCol, respawnRow);
         this.state = GhostState.CHASE;
+        this.modeTimer = CHASE_TICKS;
+        this.inScatterPhase = false;
         this.frameIndex = 0;
     }
 
@@ -47,10 +58,36 @@ public abstract class Ghost extends Entity {
             return;
         }
 
+        if (this.state == GhostState.FRIGHTENED) {
+            Direction dir = this.randomDirection(board);
+            if (dir != Direction.NONE) {
+                this.startMove(dir);
+            }
+            return;
+        }
+
         Direction dir = this.calculateNextMove(board, pacmanPosition, pacmanDirection, blinkyPosition);
         if (dir != Direction.NONE) {
             this.startMove(dir);
         }
+    }
+
+    private Direction randomDirection(Board board) {
+        Direction current = this.getDirection();
+        Direction opposite = current.opposite();
+        List<Direction> options = new ArrayList<>();
+        for (Direction dir : Direction.values()) {
+            if (dir == Direction.NONE || dir == opposite) {
+                continue;
+            }
+            if (this.canMove(dir, board)) {
+                options.add(dir);
+            }
+        }
+        if (options.isEmpty()) {
+            return opposite;
+        }
+        return options.get(RANDOM.nextInt(options.size()));
     }
 
     public void setFrightened() {
@@ -61,7 +98,7 @@ public abstract class Ghost extends Entity {
     }
 
     public void respawn() {
-        this.state = GhostState.CHASE;
+        this.state = this.inScatterPhase ? GhostState.SCATTER : GhostState.CHASE;
         this.frameIndex = 0;
     }
 
@@ -76,6 +113,8 @@ public abstract class Ghost extends Entity {
         super.resetToSpawn();
         this.state = GhostState.CHASE;
         this.frightenedTimer = 0;
+        this.modeTimer = CHASE_TICKS;
+        this.inScatterPhase = false;
         this.frameIndex = 0;
     }
 
@@ -89,8 +128,26 @@ public abstract class Ghost extends Entity {
         if (this.state == GhostState.FRIGHTENED) {
             this.frightenedTimer--;
             if (this.frightenedTimer <= 0) {
-                this.state = GhostState.CHASE;
+                this.state = this.inScatterPhase ? GhostState.SCATTER : GhostState.CHASE;
                 this.frameIndex = 0;
+            }
+            return;
+        }
+
+        if (this.state == GhostState.RESPAWNING) {
+            return;
+        }
+
+        this.modeTimer--;
+        if (this.modeTimer <= 0) {
+            if (this.inScatterPhase) {
+                this.inScatterPhase = false;
+                this.state = GhostState.CHASE;
+                this.modeTimer = CHASE_TICKS;
+            } else {
+                this.inScatterPhase = true;
+                this.state = GhostState.SCATTER;
+                this.modeTimer = SCATTER_TICKS;
             }
         }
     }

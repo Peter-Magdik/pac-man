@@ -7,6 +7,7 @@ import pacman.util.Position;
 
 public class PinkyGhost extends Ghost {
     private static final String SPRITE_DIR = "resources/ghosts/pinky";
+    private static final Position SCATTER_CORNER = new Position(2, 1);
 
     public PinkyGhost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
         super(startCol, startRow, respawnCol, respawnRow, direction);
@@ -17,7 +18,10 @@ public class PinkyGhost extends Ghost {
 
     @Override
     public Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
-        // Pinky: ambush — targets 4 tiles ahead of Pac-Man's current direction
+        if (this.getState() == pacman.util.GhostState.SCATTER) {
+            return this.bfsNextDirection(board, this.boardPosition(), SCATTER_CORNER);
+        }
+        // CHASE: ambush —> targets 4 tiles ahead of Pac-Man's current direction
         int targetCol = pacmanPosition.getX() + pacmanDirection.dx() * 4;
         int targetRow = pacmanPosition.getY() + pacmanDirection.dy() * 4;
         Position target = this.clampToBoard(targetCol, targetRow);
