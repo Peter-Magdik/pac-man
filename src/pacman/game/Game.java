@@ -1,7 +1,6 @@
 package pacman.game;
 
 import fri.shapesge.FontStyle;
-import fri.shapesge.Image;
 import fri.shapesge.Manager;
 import fri.shapesge.TextBlock;
 import pacman.board.Board;
@@ -24,7 +23,6 @@ public class Game {
     private final PacMan pacMan;
     private final List<Ghost> ghosts;
     private GameState gameState;
-    private Image bg;
     private int resetTimer;
     private static final int RESET_PAUSE_TICKS = 30;
 
@@ -35,14 +33,9 @@ public class Game {
     private final TextBlock score;
 
     public Game() {
-//        this.bg = new Image("resources/map.png");
-//        this.bg.changePosition(0, 40);
-//        this.bg.makeVisible();
-
         this.board =  new Board();
 
-        this.pacMan = new PacMan(1, 1, Direction.DOWN);
-        this.pacMan.setDirection(Direction.DOWN);
+        this.pacMan = new PacMan(14, 23, Direction.RIGHT);
 
         this.ghosts = new ArrayList<>();
         this.ghosts.add(new BlinkyGhost(11, 13, 14, 14, Direction.RIGHT));
@@ -107,12 +100,12 @@ public class Game {
     }
 
     private void resetEntitySprites() {
-        this.pacMan.getSprite().makeInvisible();
-        this.pacMan.getSprite().makeVisible();
+        this.pacMan.hide();
+        this.pacMan.show();
 
         for (Ghost ghost : this.ghosts) {
-            ghost.getSprite().makeInvisible();
-            ghost.getSprite().makeVisible();
+            ghost.hide();
+            ghost.show();
         }
     }
 
@@ -131,9 +124,8 @@ public class Game {
 
     public void tick() {
         switch (this.gameState) {
-            case WON, GAME_OVER -> {
-                this.overlay.showGameOver(this.pacMan.getScoreManager().getScore());
-            }
+            case GAME_OVER -> this.overlay.showGameOver(this.pacMan.getScoreManager().getScore());
+            case WON -> this.overlay.showWin(this.pacMan.getScoreManager().getScore());
             case RUNNING -> {
                 this.pacMan.update();
                 if (!this.pacMan.isMoving()) {
@@ -229,17 +221,6 @@ public class Game {
         }
         this.resetTimer = RESET_PAUSE_TICKS;
         this.gameState = GameState.RESETTING;
-    }
-
-    private void restartGame() {
-        this.overlay.hide();
-        this.pacMan.resetToSpawn();
-        this.pacMan.getScoreManager().reset();
-        for (Ghost ghost : this.ghosts) {
-            ghost.resetToSpawn();
-        }
-        this.gameState = GameState.RUNNING;
-        this.updateStats();
     }
 
     private void updateStats() {
