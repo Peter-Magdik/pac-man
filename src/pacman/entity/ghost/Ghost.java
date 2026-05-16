@@ -16,10 +16,11 @@ import java.util.Random;
 
 public abstract class Ghost extends Entity {
     private static final int FRIGHTENED_TICKS = 200;
-    private static final int SCATTER_TICKS = 420;   // ~7 s at 60 tps
-    private static final int CHASE_TICKS = 1200;  // ~20 s at 60 tps
+    private static final int FRIGHTENED_FLASH_TICKS = 60;
+    private static final int SCATTER_TICKS = 420;
+    private static final int CHASE_TICKS = 1200;
     public static final int NORMAL_FRAMES = 2;
-    public static final int FRIGHTENED_FRAMES = 4;
+    public static final int FRIGHTENED_FRAMES = 2;
 
     private static final Random RANDOM = new Random();
 
@@ -122,7 +123,12 @@ public abstract class Ghost extends Entity {
     public void update() {
         this.tickMovement();
 
-        int maxFrames = (this.state == GhostState.FRIGHTENED) ? FRIGHTENED_FRAMES : NORMAL_FRAMES;
+        int maxFrames = NORMAL_FRAMES;
+
+        if (this.state == GhostState.FRIGHTENED && this.frightenedTimer < FRIGHTENED_FLASH_TICKS) {
+            maxFrames += FRIGHTENED_FRAMES;
+        }
+
         this.frameIndex = (this.frameIndex + 1) % maxFrames;
 
         if (this.state == GhostState.FRIGHTENED) {
