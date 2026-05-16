@@ -15,8 +15,8 @@ public class PacMan extends Entity {
     private static final String[] FRAMES = {"resources/pacman/0.png", "resources/pacman/1.png", "resources/pacman/2.png"};
     private int frameIndex;
 
-    public PacMan(int row, int col, Direction direction) {
-        super(row, col, direction);
+    public PacMan(int col, int row, Direction direction) {
+        super(col, row, direction);
         this.powerMode = false;
         this.powerTimer = 0;
         this.frameIndex = 0;

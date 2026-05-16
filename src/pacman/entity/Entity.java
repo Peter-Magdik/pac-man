@@ -99,10 +99,6 @@ public abstract class Entity {
         this.toPosition = null;
     }
 
-    public Position getSpawnPosition() {
-        return this.spawnPosition;
-    }
-
     public void startMove(Direction dir) {
         this.fromPosition = new Position(this.windowPosition.getX(), this.windowPosition.getY());
         this.setBoardPosition(this.nextPosition(dir));

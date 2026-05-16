@@ -7,7 +7,7 @@ import pacman.util.Position;
 
 public class PinkyGhost extends Ghost {
     private static final String SPRITE_DIR = "resources/ghosts/pinky";
-    private static final Position SCATTER_CORNER = new Position(2, 1);
+    private static final Position SCATTER_CORNER = new Position(1, 1);
 
     public PinkyGhost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
         super(startCol, startRow, respawnCol, respawnRow, direction);
