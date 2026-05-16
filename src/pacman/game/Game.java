@@ -99,8 +99,21 @@ public class Game {
     }
 
     public void reset() {
-        // todo: need to get original board info
+        this.board.reset();
+        this.resetEntitySprites(); // the entity sprites z-index would be behind boards elsewise
+        this.pacMan.getScoreManager().reset();
+        this.overlay.hide();
         this.resetRound();
+    }
+
+    private void resetEntitySprites() {
+        this.pacMan.getSprite().makeInvisible();
+        this.pacMan.getSprite().makeVisible();
+
+        for (Ghost ghost : this.ghosts) {
+            ghost.getSprite().makeInvisible();
+            ghost.getSprite().makeVisible();
+        }
     }
 
     public void pressedP() {

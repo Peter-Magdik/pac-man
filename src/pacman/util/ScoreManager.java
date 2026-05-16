@@ -10,7 +10,7 @@ public class ScoreManager {
     public ScoreManager() {
         this.startScore = 0;
         this.score = 0;
-        this.startLives = 0;
+        this.startLives = 3;
         this.lives = 3;
         this.powerPelletConsumed = false;
     }

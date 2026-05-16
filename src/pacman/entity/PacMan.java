@@ -11,7 +11,7 @@ public class PacMan extends Entity {
     private boolean powerMode;
     private int powerTimer;
     private int invincibleTimer;
-    private static final int INVINCIBLE_TICKS = 120;
+    private static final int INVINCIBLE_TICKS = 40;
     private static final String[] FRAMES = {"resources/pacman/0.png", "resources/pacman/1.png", "resources/pacman/2.png"};
     private int frameIndex;
 

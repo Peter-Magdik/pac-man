@@ -14,9 +14,19 @@ public class Board {
     private int[][] graph;
 
     public Board() {
-        // TESTING DATA
-        this.grid = new Cell[31][28];
+        this.initGrid();
+    }
 
+    public void reset() {
+        for (Cell[] row : this.grid) {
+            for (Cell cell : row) {
+                cell.hide();
+            }
+        }
+        this.initGrid();
+    }
+
+    private void initGrid() {
         this.grid = new Cell[][]{
                 {this.wall(0, 0), this.wall(1, 0), this.wall(2, 0), this.wall(3, 0), this.wall(4, 0), this.wall(5, 0), this.wall(6, 0), this.wall(7, 0), this.wall(8, 0), this.wall(9, 0), this.wall(10, 0), this.wall(11, 0), this.wall(12, 0), this.wall(13, 0), this.wall(14, 0), this.wall(15, 0), this.wall(16, 0), this.wall(17, 0), this.wall(18, 0), this.wall(19, 0), this.wall(20, 0), this.wall(21, 0), this.wall(22, 0), this.wall(23, 0), this.wall(24, 0), this.wall(25, 0), this.wall(26, 0), this.wall(27, 0)},
                 {this.wall(0, 1), this.empty(1, 1), this.empty(2, 1), this.empty(3, 1), this.empty(4, 1), this.empty(5, 1), this.empty(6, 1), this.empty(7, 1), this.empty(8, 1), this.empty(9, 1), this.empty(10, 1), this.empty(11, 1), this.empty(12, 1), this.wall(13, 1), this.wall(14, 1), this.empty(15, 1), this.empty(16, 1), this.empty(17, 1), this.empty(18, 1), this.empty(19, 1), this.empty(20, 1), this.empty(21, 1), this.empty(22, 1), this.empty(23, 1), this.empty(24, 1), this.empty(25, 1), this.empty(26, 1), this.wall(27, 1)},
