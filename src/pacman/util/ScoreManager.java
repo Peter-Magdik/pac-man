@@ -15,6 +15,7 @@ public class ScoreManager {
         this.powerPelletConsumed = false;
     }
 
+    // for future implementations of loading games
     public ScoreManager(int score, int lives) {
         this.startScore = score;
         this.score = score;
@@ -23,7 +24,6 @@ public class ScoreManager {
         this.powerPelletConsumed = false;
     }
 
-    // todo find exact values
     public void addDotPoints() {
         this.score++;
     }
