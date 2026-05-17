@@ -5,10 +5,19 @@ import pacman.board.Board;
 import pacman.util.Position;
 import pacman.util.ScoreManager;
 
+/**
+ * A collectible dot cell worth standard points.
+ * Once eaten the sprite is hidden and the dot is never collected again.
+ */
 public class DotCell extends Cell {
     private final Circle sprite;
     private boolean isEaten = false;
 
+    /**
+     * Creates a dot cell at the given board position.
+     *
+     * @param position grid position
+     */
     public DotCell(Position position) {
         super(position);
         this.sprite = new Circle();
@@ -19,6 +28,12 @@ public class DotCell extends Cell {
         this.draw();
     }
 
+    /**
+     * Creates a dot cell using grid coordinates.
+     *
+     * @param col column index
+     * @param row row index
+     */
     public DotCell(int col, int row) {
         this(new  Position(col, row));
     }

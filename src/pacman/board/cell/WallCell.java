@@ -5,9 +5,18 @@ import pacman.board.Board;
 import pacman.util.Position;
 import pacman.util.ScoreManager;
 
+/**
+ * An impassable wall cell rendered as a dark-blue square.
+ * Entering a wall cell is illegal and will throw IllegalStateException.
+ */
 public class WallCell extends Cell {
     private final Square square;
 
+    /**
+     * Creates a wall cell at the given board position.
+     *
+     * @param position grid position
+     */
     public WallCell(Position position) {
         super(position);
         this.square = new Square(this.windowPosition().getX(), this.windowPosition().getY());
@@ -17,6 +26,12 @@ public class WallCell extends Cell {
         this.draw();
     }
 
+    /**
+     * Creates a wall cell using grid coordinates.
+     *
+     * @param col column index
+     * @param row row index
+     */
     public WallCell(int col, int row) {
         this(new Position(col, row));
     }

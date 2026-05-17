@@ -6,15 +6,33 @@ import pacman.board.cell.DotCell;
 import pacman.board.cell.PowerPelletCell;
 import pacman.board.cell.EmptyCell;
 
+/**
+ * Represents the game board as a 2D grid of Cell instances.
+ * <p>
+ * Responsibilities include:
+ * <ul>
+ *     <li>Initializing and owning the full 28×31 cell grid</li>
+ *     <li>Providing walkability queries used by entity movement</li>
+ *     <li>Tracking remaining dots to detect board clear</li>
+ *     <li>Exposing the adjacency graph built by GraphBuilder</li>
+ * </ul>
+ */
 public class Board {
     private Cell[][] grid;
     private int remainingDots;
     private int[][] graph;
 
+    /**
+     * Creates the board and initializes the cell grid.
+     */
     public Board() {
         this.initGrid();
     }
 
+    /**
+     * Hides all current cells, then rebuilds the grid and adjacency graph from scratch.
+     * Call this when starting a new game while keeping the same Board instance.
+     */
     public void reset() {
         for (Cell[] row : this.grid) {
             for (Cell cell : row) {
@@ -78,22 +96,52 @@ public class Board {
         return new EmptyCell(x, y);
     }
 
+    /**
+     * Returns the cell at the given grid coordinates.
+     *
+     * @param col column index
+     * @param row row index
+     * @return cell at the specified position
+     */
     public Cell getCell(int col, int row) {
         return this.grid[row][col];
     }
 
+    /**
+     * Returns whether the cell at the given coordinates can be entered by an entity.
+     *
+     * @param col column index
+     * @param row row index
+     * @return true if the cell is walkable
+     */
     public boolean isWalkable(int col, int row) {
         return this.grid[row][col].isWalkable();
     }
 
+    /**
+     * Returns the adjacency graph of walkable cells, indexed by row * cols + col.
+     * Each entry is an array of neighbor indices, including the tunnel cross-edge.
+     *
+     * @return adjacency list array
+     */
     public int[][] getGraph() {
         return this.graph;
     }
 
+    /**
+     * Decrements the remaining-dot counter.
+     * Called by DotCell and PowerPelletCell
+     * when Pac-Man enters them for the first time.
+     */
     public void dotConsumed() {
         this.remainingDots--;
     }
 
+    /**
+     * Returns whether all dots and power pellets have been consumed.
+     *
+     * @return true if no collectibles remain
+     */
     public boolean isCleared() {
         return this.remainingDots == 0;
     }

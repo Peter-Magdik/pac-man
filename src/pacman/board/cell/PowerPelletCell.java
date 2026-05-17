@@ -5,10 +5,20 @@ import pacman.board.Board;
 import pacman.util.Position;
 import pacman.util.ScoreManager;
 
+/**
+ * A large power pellet cell that, when entered, awards bonus points and activates
+ * Pac-Man's power mode, allowing him to eat ghosts temporarily.
+ * Once eaten the sprite is hidden and the pellet is never collected again.
+ */
 public class PowerPelletCell extends Cell {
     private final Circle sprite;
     private boolean isEaten = false;
 
+    /**
+     * Creates a power pellet cell at the given board position.
+     *
+     * @param position grid position
+     */
     public PowerPelletCell(Position position) {
         super(position);
 
@@ -20,6 +30,12 @@ public class PowerPelletCell extends Cell {
         this.draw();
     }
 
+    /**
+     * Creates a power pellet cell using grid coordinates.
+     *
+     * @param col column index
+     * @param row row index
+     */
     public PowerPelletCell(int col, int row) {
         this(new Position(col, row));
     }
@@ -36,6 +52,7 @@ public class PowerPelletCell extends Cell {
         this.sprite.makeInvisible();
     }
 
+    @Override
     public void onEnter(ScoreManager scoreManager, Board board) {
         if (this.isEaten) {
             return;
