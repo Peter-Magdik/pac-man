@@ -14,6 +14,8 @@ import pacman.entity.Entity;
 import pacman.util.Direction;
 import pacman.util.GameState;
 import pacman.util.GhostState;
+import pacman.util.Sound;
+import pacman.util.SoundManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,38 +115,49 @@ public class Game {
         if (this.gameState == GameState.RUNNING) {
             this.gameState = GameState.PAUSED;
             this.overlay.showPaused();
+            SoundManager.stopLoop();
+            SoundManager.playLoop(Sound.MENU);
             return;
         }
 
         if (this.gameState == GameState.PAUSED) {
             this.gameState = GameState.RUNNING;
+            SoundManager.stopLoop();
             this.overlay.hide();
         }
     }
 
     public void tick() {
         switch (this.gameState) {
-            case GAME_OVER -> this.overlay.showGameOver(this.pacMan.getScoreManager().getScore());
-            case WON -> this.overlay.showWin(this.pacMan.getScoreManager().getScore());
             case RUNNING -> {
                 this.pacMan.update();
                 if (!this.pacMan.isMoving()) {
                     this.pacMan.move(this.board);
                     this.updateStats();
+
                     if (this.board.isCleared()) {
                         this.gameState = GameState.WON;
                         this.overlay.showWin(this.pacMan.getScoreManager().getScore());
+                        SoundManager.stopLoop();
+                        SoundManager.playLoop(Sound.MENU);
+                        return;
                     }
                 }
 
+                if (this.pacMan.getScoreManager().pollDotConsumed()) {
+                    SoundManager.playOnce(Sound.EATING_DOT);
+                }
+
                 if (this.pacMan.getScoreManager().pollPowerPelletConsumed()) {
+                    SoundManager.playOnce(Sound.EATING_POWER_PELLET);
                     this.pacMan.activatePowerMode();
                     for (Ghost ghost : this.ghosts) {
                         ghost.setFrightened();
                     }
                 }
 
-                this.checkCollisions();
+                this.updateLoopSound();
+                SoundManager.tick();
 
                 this.pacMan.render();
 
@@ -158,10 +171,11 @@ public class Game {
                     );
                     ghost.render();
                 }
-            }
-            case PAUSED -> {
 
+                // this must be last because it can be game ending and sound effects will get messed up otherwise
+                this.checkCollisions();
             }
+
             case RESETTING -> {
                 this.resetTimer--;
                 if (this.resetTimer <= 0) {
@@ -189,11 +203,15 @@ public class Game {
             if (ghost.isFrightened()) {
                 ghost.onCaught();
                 this.pacMan.getScoreManager().addGhostEatenPoints();
+                SoundManager.playOnce(Sound.EATING_GHOST);
             } else if (ghost.getState() != GhostState.RESPAWNING) {
+                SoundManager.playOnce(Sound.FAIL);
                 this.pacMan.getScoreManager().loseLife();
                 if (this.pacMan.getScoreManager().isGameOver()) {
                     this.gameState = GameState.GAME_OVER;
                     this.overlay.showGameOver(this.pacMan.getScoreManager().getScore());
+                    SoundManager.stopLoop();
+                    SoundManager.playLoop(Sound.MENU);
                 } else {
                     this.resetRound();
                 }
@@ -213,7 +231,26 @@ public class Game {
         return px < gx + gs && px + ps > gx && py < gy + gs && py + ps > gy;
     }
 
+    private void updateLoopSound() {
+        boolean anyRespawning = false;
+        for (Ghost ghost : this.ghosts) {
+            if (ghost.getState() == GhostState.RESPAWNING) {
+                anyRespawning = true;
+                break;
+            }
+        }
+
+        Sound soundToPlay;
+        if (anyRespawning) {
+            soundToPlay = Sound.GHOST_RETURN_TO_HOME;
+        } else {
+            soundToPlay = Sound.GHOST_MOVE;
+        }
+        SoundManager.playLoop(soundToPlay);
+    }
+
     private void resetRound() {
+        SoundManager.playLoop(Sound.GHOST_MOVE);
         this.updateStats();
         this.pacMan.resetToSpawn();
         for (Ghost ghost : this.ghosts) {

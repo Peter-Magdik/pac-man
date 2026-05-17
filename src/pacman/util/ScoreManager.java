@@ -6,6 +6,7 @@ public class ScoreManager {
     private final int startLives;
     private int lives;
     private boolean powerPelletConsumed;
+    private boolean dotConsumed;
 
     public ScoreManager() {
         this.startScore = 0;
@@ -26,6 +27,7 @@ public class ScoreManager {
 
     public void addDotPoints() {
         this.score++;
+        this.dotConsumed = true;
     }
 
     public void addPowerPelletPoints() {
@@ -35,6 +37,15 @@ public class ScoreManager {
 
     public void addGhostEatenPoints() {
         this.score += 200;
+    }
+
+    /** Returns true and clears the flag if a dot was just consumed. */
+    public boolean pollDotConsumed() {
+        if (this.dotConsumed) {
+            this.dotConsumed = false;
+            return true;
+        }
+        return false;
     }
 
     /** Returns true and clears the flag if a power pellet was just consumed. */
@@ -64,6 +75,7 @@ public class ScoreManager {
         this.score = this.startScore;
         this.lives = this.startLives;
         this.powerPelletConsumed = false;
+        this.dotConsumed = false;
     }
 
     public int getScore() {
