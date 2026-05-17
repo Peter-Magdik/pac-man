@@ -7,6 +7,12 @@ import fri.shapesge.TextBlock;
 import java.awt.Canvas;
 import java.awt.Font;
 
+/**
+ * Modal overlay panel displayed on top of the board for game-over, win, and pause states.
+ * <p>
+ * Renders a centred blue-bordered panel with a title, an optional subtitle (e.g. final score),
+ * and a hint line. All text is horizontally centred using AWT font metrics at construction time.
+ */
 public class Overlay {
     // may change later down the line if board becomes variable size
     private static final int BOARD_PIXEL_W = 560;   // 28 cols * 20 px
@@ -33,6 +39,7 @@ public class Overlay {
     private final TextBlock subtitleText;
     private final TextBlock hintText;
 
+    /** Creates and positions all overlay sprites and text blocks. Starts hidden. */
     public Overlay() {
         this.background = new Rectangle();
         this.background.changeSize(PANEL_W, PANEL_H);
@@ -59,18 +66,30 @@ public class Overlay {
         this.hintText.changeFont("Arial", FontStyle.ITALIC, HINT_FONT_SIZE);
     }
 
+    /**
+     * Shows the game-over panel with the player's final score.
+     *
+     * @param score final score to display
+     */
     public void showGameOver(int score) {
         this.show("GAME OVER", "white", "Score: " + score, "Press R to restart or ESC to quit");
     }
 
+    /**
+     * Shows the win panel with the player's final score.
+     *
+     * @param score final score to display
+     */
     public void showWin(int score) {
         this.show("YOU WIN!", "yellow", "Score: " + score, "Press R to restart or ESC to quit");
     }
 
+    /** Shows the paused panel with a resume hint. */
     public void showPaused() {
         this.show("PAUSED", "cyan", "", "Press P to resume");
     }
 
+    /** Hides all overlay sprites and text blocks. */
     public void hide() {
         this.background.makeInvisible();
         this.border.makeInvisible();

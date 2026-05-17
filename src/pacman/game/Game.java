@@ -20,20 +20,41 @@ import pacman.util.SoundManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Central game controller.
+ * <p>
+ * Owns and coordinates all game objects: the board, Pac-Man, and the four ghosts.
+ * Receives keyboard input forwarded by ShapesGE and drives the main game loop via
+ * tick(), which ShapesGE calls on a fixed timer.
+ * <p>
+ * Responsibilities:
+ * <ul>
+ *     <li>Initializing all entities and registering with Manager</li>
+ *     <li>Running the per-tick update/move/render</li>
+ *     <li>Detecting and handling Pac-Man–ghost collisions</li>
+ *     <li>Managing game-state transitions (RUNNING, RESETTING, PAUSED, WON, GAME_OVER)</li>
+ *     <li>Triggering sound effects and the loop</li>
+ *     <li>Displaying the HUD (score and lives)</li>
+ * </ul>
+ */
 public class Game {
     private final Board board;
     private final PacMan pacMan;
     private final List<Ghost> ghosts;
+
     private GameState gameState;
     private int resetTimer;
     private static final int RESET_PAUSE_TICKS = 30;
 
     private final Overlay overlay;
 
-    // stats
     private final TextBlock lives;
     private final TextBlock score;
 
+    /**
+     * Constructs and starts the game: builds the board, spawns all entities,
+     * sets up HUD text blocks, and hands control to ShapesGE's Manager.
+     */
     public Game() {
         this.board =  new Board();
 
@@ -65,34 +86,43 @@ public class Game {
         manager.manageObject(this);
     }
 
+    /** Buffers an upward direction change for Pac-Man on the next movement decision. */
     public void up() {
         if (this.gameState == GameState.RUNNING) {
             this.pacMan.setPendingDirection(Direction.UP);
         }
     }
 
+    /** Buffers a downward direction change for Pac-Man on the next movement decision. */
     public void down() {
         if (this.gameState == GameState.RUNNING) {
             this.pacMan.setPendingDirection(Direction.DOWN);
         }
     }
 
+    /** Buffers a leftward direction change for Pac-Man on the next movement decision. */
     public void left() {
         if (this.gameState == GameState.RUNNING) {
             this.pacMan.setPendingDirection(Direction.LEFT);
         }
     }
 
+    /** Buffers a rightward direction change for Pac-Man on the next movement decision. */
     public void right() {
         if (this.gameState == GameState.RUNNING) {
             this.pacMan.setPendingDirection(Direction.RIGHT);
         }
     }
 
+    /** Exits the application immediately. */
     public void escape() {
         System.exit(0);
     }
 
+    /**
+     * Resets the entire game to its initial state: rebuilds the board, restores all
+     * entity spawn positions, clears the score, and hides any active overlay.
+     */
     public void reset() {
         this.board.reset();
         this.resetEntitySprites(); // the entity sprites z-index would be behind boards elsewise
@@ -111,6 +141,10 @@ public class Game {
         }
     }
 
+    /**
+     * Toggles the pause state. Shows the pause overlay and switches to menu music
+     * when pausing; resumes normal gameplay when unpausing.
+     */
     public void pressedP() {
         if (this.gameState == GameState.RUNNING) {
             this.gameState = GameState.PAUSED;
@@ -127,6 +161,10 @@ public class Game {
         }
     }
 
+    /**
+     * Main game loop tick called by ShapesGE on a fixed timer.
+     * Dispatches to the appropriate logic branch based on the current GameState.
+     */
     public void tick() {
         switch (this.gameState) {
             case RUNNING -> {
