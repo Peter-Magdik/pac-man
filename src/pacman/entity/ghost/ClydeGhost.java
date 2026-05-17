@@ -5,11 +5,27 @@ import pacman.board.Board;
 import pacman.util.Direction;
 import pacman.util.Position;
 
+/**
+ * Clyde - the orange ghost.
+ * <p>
+ * Chase behavior: pursues Pac-Man via BFS when more than CHASE_THRESHOLD tiles away;
+ * retreats to his scatter corner when close, making him unpredictable at short range.<br>
+ * Scatter behavior: retreats to the bottom-left corner of the board.
+ */
 public class ClydeGhost extends Ghost {
     private static final String SPRITE_DIR = "resources/ghosts/clyde";
     private static final Position SCATTER_CORNER = new Position(1, 29);
     private static final int CHASE_THRESHOLD = 4;
 
+    /**
+     * Creates Clyde at the given board position.
+     *
+     * @param startCol starting column
+     * @param startRow starting row
+     * @param respawnCol respawn home column
+     * @param respawnRow respawn home row
+     * @param direction initial direction
+     */
     public ClydeGhost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
         super(startCol, startRow, respawnCol, respawnRow, direction);
         this.setSprite(new Image(String.format("%s/%s0.png", SPRITE_DIR, direction.name())));
@@ -22,7 +38,7 @@ public class ClydeGhost extends Ghost {
         if (this.getState() == pacman.util.GhostState.SCATTER) {
             return this.bfsNextDirection(board, this.boardPosition(), SCATTER_CORNER);
         }
-        // CHASE: shy —> chases with BFS when far (>4 tiles), retreats to scatter corner when close
+
         Position target = this.manhattanDistance(this.boardPosition(), pacmanPosition) > CHASE_THRESHOLD
             ? pacmanPosition
             : SCATTER_CORNER;

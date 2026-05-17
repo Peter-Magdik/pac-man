@@ -14,6 +14,18 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Abstract base class for all ghost entities.
+ * <p>
+ * Manages:
+ * <ul>
+ *     <li>Ghost state: CHASE, SCATTER, FRIGHTENED, RESPAWNING</li>
+ *     <li>Timed mode alternation between chase and scatter phases</li>
+ *     <li>Frightened and flash animation timing</li>
+ *     <li>BFS-based pathfinding used by ghost subclasses</li>
+ *     <li>Random movement while frightened</li>
+ * </ul>
+ */
 public abstract class Ghost extends Entity {
     private static final int FRIGHTENED_TICKS = 200;
     private static final int FRIGHTENED_FLASH_TICKS = 60;
@@ -31,6 +43,15 @@ public abstract class Ghost extends Entity {
     private boolean inScatterPhase;
     private int frameIndex;
 
+    /**
+     * Creates a ghost at a given start position with a designated respawn home.
+     *
+     * @param startCol starting column
+     * @param startRow starting row
+     * @param respawnCol column of the respawn/home target position
+     * @param respawnRow row of the respawn/home target position
+     * @param direction initial movement direction
+     */
     public Ghost(int startCol, int startRow, int respawnCol, int respawnRow, Direction direction) {
         super(startCol, startRow, direction);
         this.homePosition = new  Position(respawnCol, respawnRow);
@@ -40,8 +61,27 @@ public abstract class Ghost extends Entity {
         this.frameIndex = 0;
     }
 
+    /**
+     * Calculates the preferred next movement direction for this ghost.
+     * Called each tick when the ghost is in {@code CHASE} or {@code SCATTER} state.
+     *
+     * @param board game board for collision and graph queries
+     * @param pacmanPosition current board position of Pac-Man
+     * @param pacmanDirection current movement direction of Pac-Man
+     * @param blinkyPosition current board position of Blinky (used by Inky's AI)
+     * @return chosen direction; Direction.NONE if no valid move exists
+     */
     public abstract Direction calculateNextMove(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition);
 
+    /**
+     * Advances ghost movement for one tick, choosing the appropriate strategy
+     * based on the current state (respawning, frightened, or normal AI).
+     *
+     * @param board game board
+     * @param pacmanPosition Pac-Man's current board position
+     * @param pacmanDirection Pac-Man's current direction
+     * @param blinkyPosition Blinky's current board position
+     */
     public void move(Board board, Position pacmanPosition, Direction pacmanDirection, Position blinkyPosition) {
         if (this.isMoving()) {
             return;
@@ -91,6 +131,10 @@ public abstract class Ghost extends Entity {
         return options.get(RANDOM.nextInt(options.size()));
     }
 
+    /**
+     * Switches this ghost to the FRIGHTENED state unless it is currently respawning.
+     * Resets the frightened timer to its full duration.
+     */
     public void setFrightened() {
         if (this.state != GhostState.RESPAWNING) {
             this.state = GhostState.FRIGHTENED;
@@ -98,11 +142,19 @@ public abstract class Ghost extends Entity {
         }
     }
 
+    /**
+     * Called when this ghost reaches its home position after being eaten.
+     * Transitions back to CHASE or SCATTER depending on the current phase.
+     */
     public void respawn() {
         this.state = this.inScatterPhase ? GhostState.SCATTER : GhostState.CHASE;
         this.frameIndex = 0;
     }
 
+    /**
+     * Called when Pac-Man eats this ghost while in power mode.
+     * Transitions the ghost to the RESPAWNING state so it navigates home.
+     */
     public void onCaught() {
         this.state = GhostState.RESPAWNING;
         this.setDirection(Direction.RIGHT);
@@ -169,8 +221,23 @@ public abstract class Ghost extends Entity {
         this.getSprite().changePosition(this.windowPosition().getX(), this.windowPosition().getY());
     }
 
+    /**
+     * Returns the sprite resource directory for this ghost type.
+     * Used by {@link #render()} to resolve frame image paths.
+     *
+     * @return path to the ghost's sprite folder (e.g. {@code "resources/ghosts/blinky"})
+     */
     public abstract String getSpriteDir();
 
+    /**
+     * Runs BFS on the board graph from {@code from} toward {@code to} and returns
+     * the first direction to take along the shortest path.
+     *
+     * @param board game board supplying the adjacency graph
+     * @param from  starting board position
+     * @param to    target board position
+     * @return first direction along the shortest path, or {@link Direction#NONE} if unreachable
+     */
     public Direction bfsNextDirection(Board board, Position from, Position to) {
         int cols = BOARD_COLS;
         int total = cols * BOARD_ROWS;
@@ -232,20 +299,45 @@ public abstract class Ghost extends Entity {
         return Direction.NONE;
     }
 
+    /**
+     * Computes the Manhattan distance between two board positions.
+     *
+     * @param a first position
+     * @param b second position
+     * @return sum of absolute column and row differences
+     */
     protected int manhattanDistance(Position a, Position b) {
         return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
     }
 
+    /**
+     * Clamps a target coordinate to the valid board bounds.
+     * Used by ghost AI to prevent targeting out-of-bounds positions.
+     *
+     * @param col desired column, possibly out of range
+     * @param row desired row, possibly out of range
+     * @return nearest valid board position
+     */
     protected Position clampToBoard(int col, int row) {
         col = Math.max(0, Math.min(BOARD_COLS - 1, col));
         row = Math.max(0, Math.min(BOARD_ROWS - 1, row));
         return new Position(col, row);
     }
 
+    /**
+     * Returns the current state of this ghost.
+     *
+     * @return current {@link GhostState}
+     */
     public GhostState getState() {
         return this.state;
     }
 
+    /**
+     * Returns whether this ghost is currently in the {@code FRIGHTENED} state.
+     *
+     * @return {@code true} if frightened and edible by Pac-Man
+     */
     public boolean isFrightened() {
         return this.state == GhostState.FRIGHTENED;
     }
