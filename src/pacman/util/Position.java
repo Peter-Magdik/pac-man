@@ -46,6 +46,15 @@ public class Position {
         return new Position(this.x + direction.dx(), this.y + direction.dy());
     }
 
+    /**
+     * Creates a new position translated by the given direction, wrapping around
+     * the board edges (used for tunnel cells).
+     *
+     * @param direction movement direction
+     * @param cols total number of columns in the board
+     * @param rows total number of rows in the board
+     * @return wrapped translated position
+     */
     public Position translateWrapped(Direction direction, int cols, int rows) {
         int newX = (this.x + direction.dx() + cols) % cols;
         int newY = (this.y + direction.dy() + rows) % rows;

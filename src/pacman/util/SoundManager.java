@@ -3,6 +3,14 @@ package pacman.util;
 import fri.shapesge.Music;
 import fri.shapesge.SoundEffect;
 
+/**
+ * Utility class responsible for managing all game audio playback.
+ * Handles:
+ * One-shot sound effects
+ * Looped background/music tracks
+ * Automatic loop restarting
+ * This class is static-only and cannot be instantiated.
+ */
 public final class SoundManager {
     private static final Music GHOST_MOVE_MUSIC = new Music(Sound.GHOST_MOVE.path());
     private static final Music GHOST_RETURN_MUSIC = new Music(Sound.GHOST_RETURN_TO_HOME.path());
@@ -17,6 +25,12 @@ public final class SoundManager {
 
     private SoundManager() { }
 
+    /**
+     * Plays a non-looping sound effect once.
+     * Only sound effects are handled here. Unsupported sounds are ignored.
+     *
+     * @param sound the sound effect to play
+     */
     public static void playOnce(Sound sound) {
         switch (sound) {
             case EATING_DOT -> DOT_SFX.play();
@@ -27,6 +41,14 @@ public final class SoundManager {
         }
     }
 
+    /**
+     * Starts playing a looped music track.
+     * If another loop is already playing, it is stopped first.
+     * If the requested loop is already active or unsupported,
+     * the method does nothing.
+     *
+     * @param sound the looped soundtrack to play
+     */
     public static void playLoop(Sound sound) {
         Music next = switch (sound) {
             case GHOST_MOVE -> GHOST_MOVE_MUSIC;
@@ -44,6 +66,10 @@ public final class SoundManager {
         currentLoop.play();
     }
 
+    /**
+     * Stops the currently active looped music track.
+     * If no loop is active, nothing happens.
+     */
     public static void stopLoop() {
         if (currentLoop != null) {
             currentLoop.stop();
@@ -51,6 +77,11 @@ public final class SoundManager {
         }
     }
 
+    /**
+     * Updates loop playback state.
+     * If the current loop stops playing, it is automatically restarted.
+     * Intended to be called regularly from the game loop.
+     */
     public static void tick() {
         if (currentLoop != null && !currentLoop.isPlaying()) {
             currentLoop.play();
