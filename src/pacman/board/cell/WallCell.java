@@ -12,6 +12,7 @@ public class WallCell extends Cell {
         super(position);
         this.square = new Square(this.windowPosition().getX(), this.windowPosition().getY());
         this.square.changeSize(CELL_SIZE);
+        this.square.changeColor("dark blue");
 
         this.draw();
     }

@@ -28,7 +28,7 @@ public abstract class Entity {
 
     public Entity(Position position, Direction direction) {
         this.boardPosition = position;
-        this.windowPosition = new Position(position.getX() * SIZE, position.getY() * SIZE + 40);
+        this.windowPosition = new Position(position.getX() * SIZE - 5, position.getY() * SIZE + 30);
         this.direction = direction;
         this.spawnPosition = position;
         this.spawnDirection = direction;
@@ -91,7 +91,7 @@ public abstract class Entity {
 
     public void resetToSpawn() {
         this.boardPosition = this.spawnPosition;
-        this.windowPosition = new Position(this.spawnPosition.getX() * SIZE, this.spawnPosition.getY() * SIZE + 40);
+        this.windowPosition = new Position(this.spawnPosition.getX() * SIZE - 5, this.spawnPosition.getY() * SIZE + 30);
         this.direction = this.spawnDirection;
         this.moving = false;
         this.progress = 0f;
@@ -103,8 +103,8 @@ public abstract class Entity {
         this.fromPosition = new Position(this.windowPosition.getX(), this.windowPosition.getY());
         this.setBoardPosition(this.nextPosition(dir));
         this.toPosition = new Position(
-            this.boardPosition.getX() * SIZE,
-            this.boardPosition.getY() * SIZE + 40
+            this.boardPosition.getX() * SIZE - 2,
+            this.boardPosition.getY() * SIZE + 33
         );
         this.setDirection(dir);
         this.progress = 0f;

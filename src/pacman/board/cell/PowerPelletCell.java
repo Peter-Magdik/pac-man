@@ -14,7 +14,7 @@ public class PowerPelletCell extends Cell {
 
         this.sprite = new Circle();
         this.sprite.changeSize(12);
-        this.sprite.changeColor("yellow");
+        this.sprite.changeColor("peach");
         this.sprite.changePosition(this.windowPosition().getX() + CELL_SIZE / 2 - 6, this.windowPosition().getY() + CELL_SIZE / 2 - 6);
 
         this.draw();

@@ -9,7 +9,7 @@ public abstract class Cell {
     private final Position windowPosition;
 
     public Cell(Position position) {
-        this.windowPosition = new  Position(position.getX() * CELL_SIZE, position.getY() *  CELL_SIZE + 40);
+        this.windowPosition = new  Position(position.getX() * CELL_SIZE, position.getY() *  CELL_SIZE + 35);
     }
 
     public Position windowPosition() {
