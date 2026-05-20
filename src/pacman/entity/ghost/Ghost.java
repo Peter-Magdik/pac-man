@@ -306,7 +306,7 @@ public abstract class Ghost extends Entity {
      * @param b second position
      * @return sum of absolute column and row differences
      */
-    protected int manhattanDistance(Position a, Position b) {
+    public int manhattanDistance(Position a, Position b) {
         return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
     }
 
@@ -318,7 +318,7 @@ public abstract class Ghost extends Entity {
      * @param row desired row, possibly out of range
      * @return nearest valid board position
      */
-    protected Position clampToBoard(int col, int row) {
+    public Position clampToBoard(int col, int row) {
         col = Math.max(0, Math.min(BOARD_COLS - 1, col));
         row = Math.max(0, Math.min(BOARD_ROWS - 1, row));
         return new Position(col, row);
