@@ -234,8 +234,8 @@ public abstract class Ghost extends Entity {
      * the first direction to take along the shortest path.
      *
      * @param board game board supplying the adjacency graph
-     * @param from  starting board position
-     * @param to    target board position
+     * @param from starting board position
+     * @param to target board position
      * @return first direction along the shortest path, or {@link Direction#NONE} if unreachable
      */
     public Direction bfsNextDirection(Board board, Position from, Position to) {
@@ -243,7 +243,7 @@ public abstract class Ghost extends Entity {
         int total = cols * BOARD_ROWS;
 
         int startIdx = GraphBuilder.toIndex(from.getY(), from.getX(), cols);
-        int goalIdx  = GraphBuilder.toIndex(to.getY(),   to.getX(),   cols);
+        int goalIdx = GraphBuilder.toIndex(to.getY(), to.getX(), cols);
 
         if (startIdx == goalIdx) {
             return Direction.NONE;
@@ -274,12 +274,12 @@ public abstract class Ghost extends Entity {
             return Direction.NONE;
         }
 
-        // Walk back from goal to find the first step after start
         int step = goalIdx;
         while (parent[step] != startIdx) {
             step = parent[step];
         }
 
+        // because of tunnel
         int dCol = GraphBuilder.toCol(step, cols) - from.getX();
         int dRow = GraphBuilder.toRow(step, cols) - from.getY();
 
